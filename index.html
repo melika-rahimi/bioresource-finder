@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="BioResource Finder helps biology students and researchers discover useful biological databases and online research tools."
+    >
+
+    <title>BioResource Finder</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- =========================
+         Navbar
+    ========================== -->
+    <header>
+        <nav class="navbar navbar-expand-lg site-navbar sticky-top">
+            <div class="container">
+                <a class="navbar-brand" href="#search">
+                    <span class="brand-symbol" aria-hidden="true">⌬</span>
+                    BioResource Finder
+                </a>
+
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#search">Search</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#categories">Categories</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#about">About</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- =========================
+             Search Hero
+        ========================== -->
+        <section id="search" class="search-hero">
+            <!-- Decorative nucleotide letters -->
+            <span class="nucleotide nucleotide-a" aria-hidden="true">A</span>
+            <span class="nucleotide nucleotide-t" aria-hidden="true">T</span>
+            <span class="nucleotide nucleotide-g" aria-hidden="true">G</span>
+            <span class="nucleotide nucleotide-c" aria-hidden="true">C</span>
+
+            <div class="container">
+                <div class="search-hero-content mx-auto">
+
+                    <div class="hero-label">
+                        <span class="status-dot" aria-hidden="true"></span>
+                        Biological database directory
+                    </div>
+
+                    <h1>
+                        Find the right biological resource
+                        <span>for your research task.</span>
+                    </h1>
+
+                    <p class="hero-description">
+                        Describe a biological task, data type, or research need.
+                        BioResource Finder will search a small local directory
+                        of well-known scientific resources.
+                    </p>
+
+                    <!-- Main search form -->
+                    <div class="search-shell">
+                        <form id="searchForm" class="resource-search-form">
+                            <label for="searchInput" class="visually-hidden">
+                                Describe your biological research need
+                            </label>
+
+                            <div class="search-input-wrap">
+                                <span class="search-icon" aria-hidden="true">⌕</span>
+
+                                <input
+                                    id="searchInput"
+                                    class="form-control search-input"
+                                    type="text"
+                                    placeholder="What do you need? Try “protein structure”, “sequence alignment”, or “gene information”"
+                                    autocomplete="off"
+                                >
+                            </div>
+
+                            <button class="btn search-button" type="submit">
+                                Search Resources
+                            </button>
+                        </form>
+
+                        <p class="search-helper mb-0">
+                            Search by task, data type, resource name, or scientific topic.
+                        </p>
+                    </div>
+
+                    <!-- Quick search chips -->
+                    <div class="quick-search-area">
+                        <span class="quick-search-label">Popular searches:</span>
+
+                        <div class="quick-search-chips" id="quickSearchButtons">
+                            <button
+                                class="quick-chip"
+                                type="button"
+                                data-search="sequence"
+                            >
+                                <span aria-hidden="true">🧬</span>
+                                DNA &amp; RNA
+                            </button>
+
+                            <button
+                                class="quick-chip"
+                                type="button"
+                                data-search="alignment"
+                            >
+                                <span aria-hidden="true">↔</span>
+                                Sequence Alignment
+                            </button>
+
+                            <button
+                                class="quick-chip"
+                                type="button"
+                                data-search="gene"
+                            >
+                                Genes
+                            </button>
+
+                            <button
+                                class="quick-chip"
+                                type="button"
+                                data-search="protein"
+                            >
+                                Proteins
+                            </button>
+
+                            <button
+                                class="quick-chip"
+                                type="button"
+                                data-search="protein structure"
+                            >
+                                Structure
+                            </button>
+
+                            <button
+                                class="quick-chip"
+                                type="button"
+                                data-search="genome"
+                            >
+                                Genomes
+                            </button>
+
+                            <button
+                                class="quick-chip"
+                                type="button"
+                                data-search="literature"
+                            >
+                                <span aria-hidden="true">📚</span>
+                                Literature
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================
+             Results Section
+        ========================== -->
+        <section class="results-section">
+            <div class="container">
+                <div id="resultsArea" aria-live="polite">
+
+                    <!-- Initial state before the first search -->
+                    <div class="starter-panel">
+                        <div class="starter-heading">
+                            <span class="starter-symbol" aria-hidden="true">⌁</span>
+
+                            <div>
+                                <h2>Not sure where to start?</h2>
+                                <p>
+                                    Try one of these common research tasks.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-1">
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <button
+                                    class="example-search"
+                                    type="button"
+                                    data-search="alignment"
+                                >
+                                    <span class="example-number">01</span>
+                                    <strong>Align two DNA sequences</strong>
+                                    <span>Find a sequence comparison tool</span>
+                                </button>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <button
+                                    class="example-search"
+                                    type="button"
+                                    data-search="protein"
+                                >
+                                    <span class="example-number">02</span>
+                                    <strong>Find protein information</strong>
+                                    <span>Explore sequence and function resources</span>
+                                </button>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <button
+                                    class="example-search"
+                                    type="button"
+                                    data-search="gene"
+                                >
+                                    <span class="example-number">03</span>
+                                    <strong>Explore a human gene</strong>
+                                    <span>Find gene and genome resources</span>
+                                </button>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <button
+                                    class="example-search"
+                                    type="button"
+                                    data-search="literature"
+                                >
+                                    <span class="example-number">04</span>
+                                    <strong>Search scientific literature</strong>
+                                    <span>Find biomedical publications</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================
+             Categories
+        ========================== -->
+        <section id="categories" class="categories-section section-space">
+            <div class="container">
+
+                <div class="section-heading">
+                    <span class="eyebrow">RESOURCE DIRECTORY</span>
+                    <h2>Browse by category</h2>
+                    <p>
+                        Start from a broad research need if you do not yet know
+                        the name of a specific database or tool.
+                    </p>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <article class="directory-card category-sequence">
+                            <div class="directory-icon" aria-hidden="true">AT</div>
+                            <div>
+                                <h3>Sequence &amp; Alignment</h3>
+                                <p>
+                                    DNA, RNA, BLAST, nucleotide archives,
+                                    and sequence comparison resources.
+                                </p>
+                                <span class="directory-tag">Sequence</span>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <article class="directory-card category-genome">
+                            <div class="directory-icon" aria-hidden="true">▦</div>
+                            <div>
+                                <h3>Genes &amp; Genomes</h3>
+                                <p>
+                                    Gene information, genomic annotations,
+                                    variants, chromosomes, and genome browsers.
+                                </p>
+                                <span class="directory-tag">Genome</span>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <article class="directory-card category-protein">
+                            <div class="directory-icon" aria-hidden="true">◈</div>
+                            <div>
+                                <h3>Proteins</h3>
+                                <p>
+                                    Protein sequences, functions, families,
+                                    domains, and annotation resources.
+                                </p>
+                                <span class="directory-tag">Protein</span>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <article class="directory-card category-structure">
+                            <div class="directory-icon" aria-hidden="true">⬡</div>
+                            <div>
+                                <h3>Structure</h3>
+                                <p>
+                                    Three-dimensional protein and
+                                    macromolecular structure databases.
+                                </p>
+                                <span class="directory-tag">3D Structure</span>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <article class="directory-card category-literature">
+                            <div class="directory-icon" aria-hidden="true">≡</div>
+                            <div>
+                                <h3>Literature</h3>
+                                <p>
+                                    Scientific articles, citations,
+                                    abstracts, and biomedical publications.
+                                </p>
+                                <span class="directory-tag">Literature</span>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <article class="directory-card category-data">
+                            <div class="directory-icon" aria-hidden="true">▤</div>
+                            <div>
+                                <h3>Sequencing Data</h3>
+                                <p>
+                                    Raw reads, assemblies, nucleotide data,
+                                    and high-throughput sequencing archives.
+                                </p>
+                                <span class="directory-tag">Data Archive</span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================
+             About
+        ========================== -->
+        <section id="about" class="about-section">
+            <div class="container">
+                <div class="about-panel">
+                    <div class="about-mark" aria-hidden="true">i</div>
+
+                    <div>
+                        <h2>About BioResource Finder</h2>
+
+                        <p>
+                            BioResource Finder is a small educational directory
+                            that helps biology students and researchers discover
+                            useful biological databases and online tools.
+                        </p>
+
+                        <p class="about-note mb-0">
+                            Always check the official documentation of each
+                            resource before using it in research.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- =========================
+         Footer
+    ========================== -->
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <strong>BioResource Finder</strong>
+
+            <span>
+                Educational web development project ·
+                <span id="currentYear"></span>
+            </span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JavaScript is only needed for the responsive Navbar -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    ></script>
+
+    <!-- Project JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
