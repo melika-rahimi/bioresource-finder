@@ -1272,6 +1272,7 @@ const resourceCategoryFilter = document.querySelector("#resourceCategoryFilter")
 const resourceFilterReset = document.querySelector("#resourceFilterReset");
 const resourceResults = document.querySelector("#resourceResults");
 const categoryButtons = document.querySelectorAll("[data-category]");
+const toolLauncherButtons = document.querySelectorAll("[data-tool-target]");
 const currentYear = document.querySelector("#currentYear");
 
 let resourceSearchResults = resources.slice();
@@ -1295,12 +1296,41 @@ function escapeHTML(value) {
 function scrollToSection(sectionId) {
     const element = document.querySelector("#" + sectionId);
 
-    if (element) {
+    if (!element) {
+        return;
+    }
+
+    const scrollBehavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth";
+
+    function scrollNow() {
         element.scrollIntoView({
-            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+            behavior: scrollBehavior,
             block: "start"
         });
     }
+
+    // Tool interfaces are collapsed to reduce page length.
+    // When a workflow points to one, reveal it before scrolling.
+    if (element.classList.contains("collapse") && !element.classList.contains("show")) {
+        const collapse = bootstrap.Collapse.getOrCreateInstance(element, {
+            toggle: false
+        });
+
+        element.addEventListener(
+            "shown.bs.collapse",
+            function handleShown() {
+                scrollNow();
+            },
+            { once: true }
+        );
+
+        collapse.show();
+        return;
+    }
+
+    scrollNow();
 }
 
 function formatNumber(value, decimals) {
@@ -1340,87 +1370,142 @@ function normalizeSearchText(value) {
         .replace(/\s+/g, " ");
 }
 
-function getExpandedSearchTerms(query) {
-    const normalized = normalizeSearchText(query);
-    const terms = [normalized];
+function normalizeSearchToken(word) {
+    let token = String(word)
+        .toLowerCase()
+        .replace(/[^a-z0-9-]/g, "");
 
-    normalized.split(" ").forEach(function (word) {
-        if (word.length > 2 && !terms.includes(word)) {
-            terms.push(word);
-        }
-    });
+    // Very small singular/plural normalization for common search words.
+    // This keeps "genes" close to "gene" and "proteins" close to "protein"
+    // without introducing a fuzzy-search library.
+    if (token.length > 4 && token.endsWith("s") && !token.endsWith("ss")) {
+        token = token.slice(0, -1);
+    }
+
+    return token;
+}
+
+function getTextTokens(text) {
+    return normalizeSearchText(text)
+        .split(/[^a-z0-9-]+/)
+        .map(normalizeSearchToken)
+        .filter(function (word) {
+            return word.length > 1;
+        });
+}
+
+function getQueryWords(query) {
+    return Array.from(new Set(getTextTokens(query)));
+}
+
+function getSynonymTerms(query) {
+    const normalizedQuery = normalizeSearchText(query);
+    const synonymTerms = [];
 
     Object.keys(searchSynonyms).forEach(function (key) {
-        if (normalized.includes(key)) {
+        if (normalizedQuery.includes(key)) {
             searchSynonyms[key].forEach(function (synonym) {
                 const normalizedSynonym = normalizeSearchText(synonym);
-                if (!terms.includes(normalizedSynonym)) {
-                    terms.push(normalizedSynonym);
+
+                if (!synonymTerms.includes(normalizedSynonym)) {
+                    synonymTerms.push(normalizedSynonym);
                 }
             });
         }
     });
 
-    return terms;
+    return synonymTerms;
 }
 
 function scoreResource(resource, query) {
     const normalizedQuery = normalizeSearchText(query);
-    const terms = getExpandedSearchTerms(query);
+    const queryWords = getQueryWords(query);
+    const synonymTerms = getSynonymTerms(query);
 
     const name = normalizeSearchText(resource.name);
-    const organization = normalizeSearchText(resource.organization);
     const category = normalizeSearchText(resource.category);
     const type = normalizeSearchText(resource.type);
     const description = normalizeSearchText(resource.description);
-    const keywords = resource.keywords.map(normalizeSearchText);
     const tasks = resource.tasks.map(normalizeSearchText);
-    const synonyms = resource.synonyms.map(normalizeSearchText);
+    const keywords = resource.keywords.map(normalizeSearchText);
+    const resourceSynonyms = resource.synonyms.map(normalizeSearchText);
 
     let score = 0;
 
-    if (name === normalizedQuery) score += 140;
-    if (name.includes(normalizedQuery)) score += 65;
+    // Main phrase scoring. These are the weights shown in the project notes.
+    if (name === normalizedQuery) {
+        score += 12;
+    } else if (name.includes(normalizedQuery)) {
+        score += 9;
+    }
 
     tasks.forEach(function (task) {
-        if (task === normalizedQuery) score += 85;
-        else if (task.includes(normalizedQuery) || normalizedQuery.includes(task)) score += 48;
+        if (task === normalizedQuery) {
+            score += 10;
+        } else if (task.includes(normalizedQuery)) {
+            score += 8;
+        }
     });
 
-    if (category === normalizedQuery) score += 70;
-    else if (category.includes(normalizedQuery)) score += 38;
-
-    if (type === normalizedQuery) score += 38;
-    else if (type.includes(normalizedQuery)) score += 20;
+    if (category === normalizedQuery || category.includes(normalizedQuery)) {
+        score += 6;
+    }
 
     keywords.forEach(function (keyword) {
-        if (keyword === normalizedQuery) score += 46;
-        else if (keyword.includes(normalizedQuery) || normalizedQuery.includes(keyword)) score += 24;
+        if (keyword === normalizedQuery) {
+            score += 5;
+        } else if (keyword.includes(normalizedQuery)) {
+            score += 3;
+        }
     });
 
-    synonyms.forEach(function (synonym) {
-        if (synonym === normalizedQuery) score += 42;
-        else if (synonym.includes(normalizedQuery) || normalizedQuery.includes(synonym)) score += 20;
-    });
+    if (description.includes(normalizedQuery)) {
+        score += 1;
+    }
 
-    if (description.includes(normalizedQuery)) score += 14;
-    if (organization.includes(normalizedQuery)) score += 12;
+    // Multi-word support: reward coverage of individual query words.
+    // Token matching prevents a search for "gene" from matching the word
+    // "genetic" only because both begin with the same letters.
+    const nameTokens = getTextTokens(name);
+    const categoryTokens = getTextTokens(category);
+    const typeTokens = getTextTokens(type);
+    const descriptionTokens = getTextTokens(description);
 
-    terms.forEach(function (term) {
-        if (name.includes(term)) score += 11;
-        if (category.includes(term)) score += 8;
-        if (description.includes(term)) score += 3;
-
-        keywords.forEach(function (keyword) {
-            if (keyword.includes(term)) score += 6;
-        });
+    queryWords.forEach(function (word) {
+        if (nameTokens.includes(word)) score += 2;
+        if (categoryTokens.includes(word)) score += 1.5;
+        if (typeTokens.includes(word)) score += 1;
+        if (descriptionTokens.includes(word)) score += 0.25;
 
         tasks.forEach(function (task) {
-            if (task.includes(term)) score += 7;
+            if (getTextTokens(task).includes(word)) score += 1.5;
         });
 
-        synonyms.forEach(function (synonym) {
-            if (synonym.includes(term)) score += 5;
+        keywords.forEach(function (keyword) {
+            const keywordTokens = getTextTokens(keyword);
+
+            if (normalizeSearchToken(keyword) === word) score += 1.5;
+            else if (keywordTokens.includes(word)) score += 0.75;
+        });
+    });
+
+    // Synonyms are useful for recall, but deliberately receive a lower bonus
+    // than direct name/task/category matches.
+    synonymTerms.forEach(function (synonym) {
+        if (name.includes(synonym)) score += 1.5;
+        if (category.includes(synonym)) score += 1;
+        if (description.includes(synonym)) score += 0.25;
+
+        tasks.forEach(function (task) {
+            if (task.includes(synonym)) score += 1;
+        });
+
+        keywords.forEach(function (keyword) {
+            if (keyword.includes(synonym)) score += 0.75;
+        });
+
+        resourceSynonyms.forEach(function (resourceSynonym) {
+            if (resourceSynonym.includes(synonym)) score += 0.75;
         });
     });
 
@@ -1513,7 +1598,7 @@ function renderResourceResults() {
     count.className = "result-count";
 
     if (currentSearchText) {
-        count.textContent = results.length + ' resources found for "' + currentSearchText + '"';
+        count.textContent = results.length + ' relevant resources found for "' + currentSearchText + '"';
     } else if (resourceCategoryFilter.value !== "All") {
         count.textContent = results.length + ' resources in "' + resourceCategoryFilter.value + '"';
     } else if (resourceTypeFilter.value !== "All") {
@@ -1665,6 +1750,23 @@ resourceFilterReset.addEventListener("click", function () {
 categoryButtons.forEach(function (button) {
     button.addEventListener("click", function () {
         browseResourceCategory(button.dataset.category);
+    });
+});
+
+// Tool launcher buttons use Bootstrap Collapse for progressive disclosure.
+toolLauncherButtons.forEach(function (button) {
+    const targetId = button.dataset.toolTarget;
+    const target = document.querySelector("#" + targetId);
+
+    if (!target) {
+        return;
+    }
+
+    target.addEventListener("shown.bs.collapse", function () {
+        target.scrollIntoView({
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+            block: "start"
+        });
     });
 });
 
@@ -2982,18 +3084,31 @@ problemResult.addEventListener("click", function (event) {
     const workflowButton = event.target.closest("[data-problem-workflow]");
     const searchButton = event.target.closest("[data-problem-search]");
 
-    if (scrollButton) {
-        scrollToSection(scrollButton.dataset.problemScroll);
+    if (!scrollButton && !workflowButton && !searchButton) {
+        return;
     }
 
-    if (workflowButton) {
-        renderWorkflow(workflowButton.dataset.problemWorkflow);
+    const modalElement = document.querySelector("#problemModal");
+    const modal = bootstrap.Modal.getInstance(modalElement);
+
+    if (modal) {
+        modal.hide();
     }
 
-    if (searchButton) {
-        performResourceSearch(searchButton.dataset.problemSearch);
-        scrollToSection("resource-finder");
-    }
+    window.setTimeout(function () {
+        if (scrollButton) {
+            scrollToSection(scrollButton.dataset.problemScroll);
+        }
+
+        if (workflowButton) {
+            renderWorkflow(workflowButton.dataset.problemWorkflow);
+        }
+
+        if (searchButton) {
+            performResourceSearch(searchButton.dataset.problemSearch);
+            scrollToSection("resource-finder");
+        }
+    }, 180);
 });
 
 
