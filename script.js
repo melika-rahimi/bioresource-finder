@@ -1,10 +1,11 @@
-// ============================================================
-// Biological Resource Database
-// ============================================================
-// The directory is stored locally so the website remains static and
-// GitHub Pages compatible. Each object describes one trusted resource.
+// =====================================
+// DATA: Biological Resources
+// =====================================
+// The app stays fully static. All searchable resource data lives in this
+// local array, so GitHub Pages does not need an API or a server.
 
 const resources = [
+
     {
         name: "NCBI Nucleotide",
         type: "Database",
@@ -461,16 +462,304 @@ const resources = [
         description: "An official NEB web tool for planning cloning and DNA assembly workflows.",
         url: "https://nebcloner.neb.com/"
     }
+    ,
+    {
+        name: "FlyBase",
+        type: "Database",
+        category: "Model Organisms",
+        keywords: ["Drosophila", "fruit fly", "gene", "genome", "model organism"],
+        tasks: ["find Drosophila gene information", "explore fruit-fly genetics and genomics"],
+        description: "A curated genetics and genomics resource for Drosophila research.",
+        url: "https://flybase.org/"
+    },
+    {
+        name: "Mouse Genome Informatics",
+        type: "Database",
+        category: "Model Organisms",
+        keywords: ["mouse", "Mus musculus", "gene", "phenotype", "model organism"],
+        tasks: ["find mouse gene information", "explore mouse genetics, phenotypes, and disease models"],
+        description: "A curated resource for mouse genetics, genomics, phenotypes, and biological knowledge.",
+        url: "https://www.informatics.jax.org/"
+    },
+    {
+        name: "ZFIN",
+        type: "Database",
+        category: "Model Organisms",
+        keywords: ["zebrafish", "Danio rerio", "gene", "phenotype", "model organism"],
+        tasks: ["find zebrafish gene information", "explore zebrafish genetics and phenotypes"],
+        description: "The Zebrafish Information Network for curated zebrafish genetics and genomics data.",
+        url: "https://zfin.org/"
+    },
+    {
+        name: "WormBase",
+        type: "Database",
+        category: "Model Organisms",
+        keywords: ["C. elegans", "Caenorhabditis elegans", "worm", "gene", "model organism"],
+        tasks: ["find C. elegans gene information", "explore nematode genetics and genomics"],
+        description: "A biological information resource for C. elegans and related nematodes.",
+        url: "https://wormbase.org/"
+    }
+
 ];
 
+// Add two metadata fields used by the improved search.
+// Keeping this in one beginner-friendly function avoids repeating the
+// same organization name inside dozens of resource objects.
+function getOrganizationForResource(resourceName) {
+    if (resourceName.includes("NCBI") || resourceName === "GenBank" || resourceName === "PubMed" || resourceName === "PubMed Central") return "NCBI / NIH";
+    if (resourceName.includes("EMBL-EBI") || resourceName === "European Nucleotide Archive" || resourceName === "PDBe" || resourceName === "InterPro" || resourceName === "Expression Atlas" || resourceName === "Single Cell Expression Atlas" || resourceName === "BioStudies" || resourceName === "GWAS Catalog") return "EMBL-EBI";
+    if (resourceName === "UniProt") return "UniProt Consortium";
+    if (resourceName === "RCSB Protein Data Bank") return "RCSB PDB";
+    if (resourceName === "AlphaFold Protein Structure Database") return "Google DeepMind / EMBL-EBI";
+    if (resourceName === "SWISS-MODEL" || resourceName === "PROSITE") return "SIB Swiss Institute of Bioinformatics";
+    if (resourceName === "PANTHER") return "PANTHER Classification System";
+    if (resourceName === "Reactome") return "Reactome";
+    if (resourceName === "KEGG") return "Kanehisa Laboratories";
+    if (resourceName === "Gene Ontology Resource") return "Gene Ontology Consortium";
+    if (resourceName === "g:Profiler") return "University of Tartu";
+    if (resourceName === "gnomAD") return "Broad Institute";
+    if (resourceName.includes("IDT")) return "Integrated DNA Technologies";
+    if (resourceName === "Primer3") return "Primer3 Project";
+    if (resourceName === "Addgene") return "Addgene";
+    if (resourceName.includes("NEB")) return "New England Biolabs";
+    if (resourceName === "Europe PMC") return "Europe PMC";
+    if (resourceName === "bioRxiv") return "Cold Spring Harbor Laboratory";
+    if (resourceName === "Ensembl") return "EMBL-EBI";
+    if (resourceName === "UCSC Genome Browser") return "UCSC";
+    if (resourceName === "FlyBase") return "FlyBase Consortium";
+    if (resourceName === "Mouse Genome Informatics") return "The Jackson Laboratory";
+    if (resourceName === "ZFIN") return "ZFIN";
+    if (resourceName === "WormBase") return "WormBase Consortium";
+    return "Official scientific resource";
+}
 
-// ============================================================
-// Learn & Troubleshoot Resource Database
-// ============================================================
-// Educational links are stored here instead of being scattered through
-// the HTML. Each tool gets learning, troubleshooting, and professional links.
+function getSynonymsForResource(resource) {
+    const synonyms = [];
+
+    resource.keywords.forEach(function (keyword) {
+        const normalizedKeyword = String(keyword).toLowerCase();
+        if (!synonyms.includes(normalizedKeyword)) {
+            synonyms.push(normalizedKeyword);
+        }
+    });
+
+    if (resource.name === "RCSB Protein Data Bank" || resource.name === "PDBe") {
+        synonyms.push("pdb", "protein structure database", "3d structure");
+    }
+
+    if (resource.name === "NCBI Sequence Read Archive") {
+        synonyms.push("sra", "raw sequencing reads", "ngs reads");
+    }
+
+    if (resource.name === "NCBI GEO") {
+        synonyms.push("geo", "expression data", "transcriptomics");
+    }
+
+    if (resource.name === "NCBI Primer-BLAST") {
+        synonyms.push("primer blast", "primer specificity", "design primers");
+    }
+
+    return synonyms;
+}
+
+resources.forEach(function (resource) {
+    resource.organization = getOrganizationForResource(resource.name);
+    resource.synonyms = getSynonymsForResource(resource);
+});
+
+
+// =====================================
+// DATA: Workflow Definitions
+// =====================================
+
+const workflows = {
+    analyzeDna: {
+        title: "I have a DNA sequence",
+        description: "Start with a quick local sequence check, then choose what you want to learn about the sequence.",
+        steps: [
+            "Paste raw DNA, multiline DNA, or one FASTA record.",
+            "Clean whitespace and normalize lowercase bases.",
+            "Check A, T, G, C and optional N symbols.",
+            "Review length, composition, GC/AT percentages, cleaned sequence, and reverse complement.",
+            "Choose a biologically appropriate next step instead of assuming what the sequence represents."
+        ],
+        actions: [
+            { label: "Open DNA Analyzer", kind: "scroll", target: "dna-tool" },
+            { label: "Identify or compare sequence", kind: "search", query: "sequence similarity BLAST" },
+            { label: "Find restriction sites", kind: "scroll", target: "restriction-tool" }
+        ]
+    },
+    identifySequence: {
+        title: "I have a sequence and I don't know what it is",
+        description: "First decide what kind of sequence you may have. Similarity searches can suggest related sequences, but similarity alone does not prove identical biological function.",
+        sequenceChooser: true,
+        steps: [
+            "Check whether the input appears to be nucleotide, protein, or still unknown.",
+            "Clean the sequence before using a professional similarity-search tool.",
+            "Use a database suited to the sequence type.",
+            "Interpret similarity together with annotation, organism, coverage, identity, and biological context."
+        ]
+    },
+    primers: {
+        title: "Primer Design & Quick Check",
+        description: "Use the built-in check for simple composition and approximate Tm, then continue to specificity and secondary-structure analysis.",
+        steps: [
+            "Enter a forward primer and optionally a reverse primer.",
+            "Review length, base counts, GC content, and approximate Tm.",
+            "If two primers are supplied, compare their approximate Tm values.",
+            "Check specificity with Primer-BLAST.",
+            "Check hairpins and dimers with an oligonucleotide analysis tool."
+        ],
+        actions: [
+            { label: "Open Primer Quick Check", kind: "scroll", target: "primer-tool" },
+            { label: "Find professional primer tools", kind: "search", query: "primer design specificity" }
+        ]
+    },
+    planPcr: {
+        title: "Plan a PCR",
+        description: "Scale a reaction from your own protocol and decide which components belong in a pooled master mix.",
+        steps: [
+            "Enter the number of reactions and your extra allowance.",
+            "Enter the final reaction volume from your protocol.",
+            "Enter each reagent volume per reaction.",
+            "Mark whether each component belongs in the pooled master mix.",
+            "Review scaled totals and compare them with the protocol before laboratory use."
+        ],
+        actions: [
+            { label: "Open PCR Calculator", kind: "scroll", target: "pcr-tool" },
+            { label: "Open PCR troubleshooting", kind: "scroll", target: "pcr-troubleshooting-tool" }
+        ]
+    },
+    troubleshootPcr: {
+        title: "My PCR did not work",
+        description: "Choose what you observed. The app will show areas to investigate, not claim a definitive cause.",
+        steps: [
+            "Describe the observed PCR outcome.",
+            "Review possible categories to investigate.",
+            "Check primer design and specificity where relevant.",
+            "Check template, cycling, reaction chemistry, and contamination where relevant.",
+            "Use an official troubleshooting guide and your reagent protocol."
+        ],
+        actions: [
+            { label: "Open Guided PCR Troubleshooting", kind: "scroll", target: "pcr-troubleshooting-tool" }
+        ]
+    },
+    restriction: {
+        title: "Work with restriction enzymes",
+        description: "Find recognition sites in DNA, then verify experimental enzyme properties with official documentation.",
+        steps: [
+            "Paste a DNA sequence.",
+            "Choose a restriction enzyme.",
+            "Find recognition-sequence start positions.",
+            "Remember that a recognition-site match does not prove a digest will work.",
+            "Check buffer, temperature, methylation sensitivity, star activity, heat inactivation, and expected fragments."
+        ],
+        actions: [
+            { label: "Open Restriction Site Finder", kind: "scroll", target: "restriction-tool" },
+            { label: "Browse cloning resources", kind: "search", query: "restriction enzyme cloning" }
+        ]
+    },
+    dilution: {
+        title: "Prepare a dilution",
+        description: "Use C1V1 = C2V2 for a simple dilution when C1 and C2 are expressed in the same concentration unit.",
+        steps: [
+            "Enter stock concentration C1.",
+            "Enter desired concentration C2.",
+            "Enter final volume V2.",
+            "Calculate V1 = (C2 × V2) / C1.",
+            "Calculate diluent volume = V2 − V1."
+        ],
+        actions: [
+            { label: "Open Dilution Calculator", kind: "scroll", target: "dilution-tool" }
+        ]
+    },
+    geneGenome: {
+        title: "Find a gene or genome",
+        description: "Choose between gene records, genome browsing, and genomic context depending on what you already know.",
+        steps: [
+            "If you know a gene name or identifier, start with a gene record.",
+            "If you need genomic context, use a genome browser.",
+            "If you have a sequence rather than a gene name, identify or map the sequence first.",
+            "Check organism and genome assembly before interpreting genomic coordinates."
+        ],
+        actions: [
+            { label: "Search gene resources", kind: "search", query: "gene genomic location" },
+            { label: "Search genome browsers", kind: "search", query: "genome browser" }
+        ]
+    },
+    proteinInfo: {
+        title: "Find protein information",
+        description: "Use protein resources for sequence, function, domains, families, and annotations.",
+        steps: [
+            "Search by protein name, accession, gene, or sequence as appropriate.",
+            "Use UniProt or NCBI Protein for protein records.",
+            "Use InterPro/PROSITE for domains, families, and functional sites.",
+            "Keep predicted annotation separate from experimentally supported evidence."
+        ],
+        actions: [
+            { label: "Search protein resources", kind: "search", query: "protein function domains" }
+        ]
+    },
+    proteinStructure: {
+        title: "Find a protein structure",
+        description: "Separate experimentally determined structures from predicted or comparative models.",
+        steps: [
+            "Search RCSB PDB or PDBe for experimentally determined structures.",
+            "If no experimental structure is available, explore prediction/modeling resources.",
+            "Check confidence and provenance before interpreting a predicted model.",
+            "Do not treat a prediction as equivalent to experimental validation."
+        ],
+        actions: [
+            { label: "Search structure resources", kind: "search", query: "protein structure" }
+        ]
+    },
+    sequencingData: {
+        title: "Find sequencing or expression data",
+        description: "Choose a repository based on whether you need raw reads, processed expression data, or study-level files.",
+        steps: [
+            "For raw sequencing reads, search SRA or ENA.",
+            "For gene-expression studies, search GEO or Expression Atlas.",
+            "For single-cell expression, use a single-cell expression resource.",
+            "Read study metadata before comparing datasets."
+        ],
+        actions: [
+            { label: "Search RNA-seq resources", kind: "search", query: "raw RNA-seq reads sequencing data" }
+        ]
+    },
+    literature: {
+        title: "Search scientific literature",
+        description: "Use literature databases for peer-reviewed papers, full text, or preprints depending on your goal.",
+        steps: [
+            "Start with a clear biological question and search terms.",
+            "Use PubMed/Europe PMC for biomedical literature.",
+            "Use PubMed Central when you specifically need full-text archive content.",
+            "Treat preprints as manuscripts that may not yet have completed peer review."
+        ],
+        actions: [
+            { label: "Search literature resources", kind: "search", query: "scientific literature papers" }
+        ]
+    },
+    findDatabase: {
+        title: "I don't know which database to use",
+        description: "Describe the biological information or task you need. The Resource Finder ranks likely starting points.",
+        steps: [
+            "Describe the task rather than guessing a database name.",
+            "Review the highest-ranked resources and their 'Good for' descriptions.",
+            "Open the resource's own help/documentation before interpreting research results."
+        ],
+        actions: [
+            { label: "Open Resource Finder", kind: "scroll", target: "resource-finder" }
+        ]
+    }
+};
+
+
+// =====================================
+// DATA: Help Resources
+// =====================================
 
 const helpResources = {
+
     sequence: {
         learn: [
             {
@@ -727,156 +1016,475 @@ const helpResources = {
     }
 };
 
-const helpIntroductions = {
-    sequence: "Understand sequence format, orientation, reverse complement, and where to continue after this simple local analysis.",
-    primer: "This quick check only calculates simple properties. Primer specificity, secondary structure, and experimental performance require dedicated tools and appropriate settings.",
-    pcr: "The calculator only scales volumes. PCR chemistry, cycling conditions, primer quality, template quality, and reagent specifications must come from an appropriate protocol.",
-    dilution: "A simple dilution uses C1 × V1 = C2 × V2. C1 and C2 must use the same concentration unit, and dilution can only reduce concentration.",
-    restriction: "This tool only searches recognition-site text. Real restriction digests also depend on enzyme conditions, buffers, temperature, methylation sensitivity, and the experimental DNA sample."
-};
+// Add an explicit Official Documentation group to each help topic.
+helpResources.sequence.officialDocumentation = [
+    {
+        title: "NCBI FASTA Format",
+        organization: "NCBI",
+        sourceType: "Official format documentation",
+        description: "Verify how FASTA definition lines and sequence text are represented.",
+        url: "https://www.ncbi.nlm.nih.gov/genbank/fastaformat"
+    }
+];
+
+helpResources.primer.officialDocumentation = [
+    {
+        title: "Primer-BLAST Documentation",
+        organization: "NCBI",
+        sourceType: "Official scientific documentation",
+        description: "Verify primer-design and specificity-checking behavior in Primer-BLAST.",
+        url: "https://www.ncbi.nlm.nih.gov/tools/primer-blast/primerinfo.html"
+    }
+];
+
+helpResources.pcr.officialDocumentation = [
+    {
+        title: "PCR Protocol",
+        organization: "Addgene",
+        sourceType: "Educational protocol",
+        description: "Review a complete PCR protocol rather than relying on example calculator values.",
+        url: "https://www.addgene.org/protocols/pcr/"
+    }
+];
+
+helpResources.dilution.officialDocumentation = [
+    {
+        title: "IDT Resuspension and Dilution Guide",
+        organization: "IDT",
+        sourceType: "Official educational documentation",
+        description: "Check laboratory concentration and dilution examples.",
+        url: "https://www.idtdna.com/page/support-and-education/decoded-plus/easy-resuspension-and-dilution-of-oligonucleotides"
+    }
+];
+
+helpResources.restriction.officialDocumentation = [
+    {
+        title: "NEB Enzyme Finder",
+        organization: "New England Biolabs",
+        sourceType: "Official enzyme documentation tool",
+        description: "Verify recognition sequence and current experimental recommendations for an enzyme.",
+        url: "https://enzymefinder.neb.com/"
+    }
+];
 
 
-// ============================================================
-// Restriction Enzyme Data
-// ============================================================
-// Recognition sequences are stored without cleavage marks because this tool
-// only searches the DNA text for matching recognition sites.
+// =====================================
+// DATA: Restriction Enzymes
+// =====================================
 
 const restrictionEnzymes = {
-    EcoRI: "GAATTC",
-    BamHI: "GGATCC",
-    HindIII: "AAGCTT",
-    NotI: "GCGGCCGC",
-    XhoI: "CTCGAG",
-    PstI: "CTGCAG"
+    EcoRI: {
+        recognition: "GAATTC",
+        documentation: "https://www.neb.com/en/products/r0101-ecori"
+    },
+    BamHI: {
+        recognition: "GGATCC",
+        documentation: "https://www.neb.com/en/products/r0136-bamhi"
+    },
+    HindIII: {
+        recognition: "AAGCTT",
+        documentation: "https://www.neb.com/en/products/r0104-hindiii"
+    },
+    PstI: {
+        recognition: "CTGCAG",
+        documentation: "https://www.neb.com/en/products/r0140-psti"
+    },
+    XhoI: {
+        recognition: "CTCGAG",
+        documentation: "https://www.neb.com/en/products/r0146-xhoi"
+    },
+    NotI: {
+        recognition: "GCGGCCGC",
+        documentation: "https://www.neb.com/en/products/r0189-noti"
+    }
 };
 
 
-// ============================================================
-// Shared DOM Elements
-// ============================================================
-
-const searchForm = document.querySelector("#searchForm");
-const searchInput = document.querySelector("#searchInput");
-const resultsArea = document.querySelector("#resultsArea");
-const quickSearchButtons = document.querySelectorAll(".quick-chip");
-const exampleSearchButtons = document.querySelectorAll(".example-search");
-const typeFilterButtons = document.querySelectorAll(".filter-button");
-const categoryFilter = document.querySelector("#categoryFilter");
-const clearFilters = document.querySelector("#clearFilters");
-const currentYear = document.querySelector("#currentYear");
-
-let lastSearchResults = [];
-let lastSearchText = "";
-let activeTypeFilter = "All";
-let activeCategoryFilter = "All";
-let hasSearched = false;
-let lastReverseComplement = "";
-
-
-// ============================================================
-// Resource Finder
-// ============================================================
+// =====================================
+// DATA: Search Synonyms
+// =====================================
 
 const searchSynonyms = {
-    sequencing: ["sequence", "reads", "SRA", "ENA", "NGS"],
-    paper: ["literature", "article", "publication", "PubMed"],
-    papers: ["literature", "article", "publication", "PubMed"],
-    mutation: ["variant", "SNP", "genetic variation", "ClinVar"],
-    alignment: ["BLAST", "sequence similarity", "pairwise alignment", "multiple sequence alignment"],
-    structure: ["PDB", "protein structure", "AlphaFold", "structural biology"],
-    primer: ["PCR", "primer design", "Primer-BLAST", "oligo"],
-    expression: ["RNA-seq", "transcriptomics", "gene expression", "GEO"],
-    pathway: ["functional analysis", "enrichment", "Gene Ontology", "Reactome"]
+    "paper": ["literature", "article", "publication", "pubmed"],
+    "papers": ["literature", "article", "publication", "pubmed"],
+    "sequencing": ["sequence", "reads", "sra", "ena", "ngs"],
+    "rna-seq": ["rna seq", "sequencing data", "gene expression", "sra", "geo"],
+    "rnaseq": ["rna seq", "sequencing data", "gene expression", "sra", "geo"],
+    "mutation": ["variant", "snp", "genetic variation", "clinvar"],
+    "alignment": ["blast", "sequence similarity", "alignment"],
+    "structure": ["pdb", "protein structure", "alphafold", "structural biology"],
+    "primer": ["pcr primer", "primer design", "primer-blast", "oligo"],
+    "gene": ["gene information", "genomic location", "transcript"],
+    "genome": ["genome browser", "assembly", "chromosome"],
+    "domain": ["protein domain", "interpro", "prosite"],
+    "pathway": ["reactome", "kegg", "functional analysis", "enrichment"]
 };
 
-function getSearchTerms(searchText) {
-    const normalizedSearch = searchText.trim().toLowerCase();
-    const searchTerms = [normalizedSearch];
 
-    normalizedSearch.split(/\s+/).forEach(function (word) {
-        if (word.length > 2 && !searchTerms.includes(word)) {
-            searchTerms.push(word);
+// =====================================
+// DATA: Guided PCR Troubleshooting
+// =====================================
+
+const pcrTroubleshooting = {
+    noProduct: {
+        title: "No amplification",
+        explanation: "No visible PCR product can have several possible causes. This app cannot determine the cause from one observation.",
+        checks: ["template quality or quantity", "primer design and specificity", "annealing conditions", "polymerase and reaction setup", "cycle parameters"],
+        links: [
+            ["NEB PCR Troubleshooting Guide", "https://www.neb.com/en-gb/tools-and-resources/troubleshooting-guides/pcr-troubleshooting-guide"],
+            ["NCBI Primer-BLAST", "https://www.ncbi.nlm.nih.gov/tools/primer-blast/"]
+        ]
+    },
+    weak: {
+        title: "Weak amplification",
+        explanation: "A weak product can arise from multiple interacting factors, so investigate systematically rather than changing many conditions at once.",
+        checks: ["template amount or quality", "primer-template compatibility", "annealing conditions", "reaction chemistry", "cycle number and extension conditions"],
+        links: [
+            ["NEB PCR Troubleshooting Guide", "https://www.neb.com/en-gb/tools-and-resources/troubleshooting-guides/pcr-troubleshooting-guide"]
+        ]
+    },
+    multipleBands: {
+        title: "Multiple bands",
+        explanation: "Multiple products suggest that more than one DNA region may have been amplified or that reaction specificity needs investigation.",
+        checks: ["primer specificity", "annealing conditions", "primer concentration", "template complexity", "cycle conditions"],
+        links: [
+            ["NCBI Primer-BLAST", "https://www.ncbi.nlm.nih.gov/tools/primer-blast/"],
+            ["IDT OligoAnalyzer", "https://www.idtdna.com/pages/tools/oligoanalyzer"]
+        ]
+    },
+    nonspecific: {
+        title: "Non-specific amplification",
+        explanation: "Non-specific amplification means products other than the intended target are being generated. Several design and reaction factors may contribute.",
+        checks: ["primer specificity", "annealing temperature", "primer concentration", "template complexity", "reaction conditions"],
+        links: [
+            ["NCBI Primer-BLAST", "https://www.ncbi.nlm.nih.gov/tools/primer-blast/"],
+            ["NEB PCR Troubleshooting Guide", "https://www.neb.com/en-gb/tools-and-resources/troubleshooting-guides/pcr-troubleshooting-guide"]
+        ]
+    },
+    smear: {
+        title: "Smear",
+        explanation: "A smear is a pattern rather than a diagnosis. It can reflect several possible template, specificity, or reaction-condition issues.",
+        checks: ["template integrity and amount", "primer specificity", "cycle conditions", "reaction chemistry", "possible contamination"],
+        links: [
+            ["NEB PCR Troubleshooting Guide", "https://www.neb.com/en-gb/tools-and-resources/troubleshooting-guides/pcr-troubleshooting-guide"]
+        ]
+    },
+    unexpectedSize: {
+        title: "Unexpected product size",
+        explanation: "An unexpected band size should be checked against the intended amplicon, primer-binding locations, and possible alternative products.",
+        checks: ["primer-binding sites", "primer specificity", "template identity", "expected amplicon coordinates", "gel interpretation"],
+        links: [
+            ["NCBI Primer-BLAST", "https://www.ncbi.nlm.nih.gov/tools/primer-blast/"]
+        ]
+    },
+    unknown: {
+        title: "I don't know what failed",
+        explanation: "Start with a structured review of the experiment rather than assuming one cause.",
+        checks: ["template", "primers", "reaction setup", "cycling program", "controls", "gel and expected product"],
+        links: [
+            ["NEB PCR Troubleshooting Guide", "https://www.neb.com/en-gb/tools-and-resources/troubleshooting-guides/pcr-troubleshooting-guide"],
+            ["Addgene PCR Protocol", "https://www.addgene.org/protocols/pcr/"]
+        ]
+    }
+};
+
+
+// =====================================
+// DATA: Problem Navigator
+// =====================================
+
+const problemGuides = {
+    pcrNoProduct: {
+        title: "My PCR has no product",
+        text: "Use the PCR troubleshooting workflow. Possible factors to investigate include template, primers, annealing conditions, reaction chemistry, and cycle parameters.",
+        internalTarget: "pcr-troubleshooting-tool",
+        professionalTitle: "Open NEB PCR Troubleshooting Guide",
+        professionalUrl: "https://www.neb.com/en-gb/tools-and-resources/troubleshooting-guides/pcr-troubleshooting-guide"
+    },
+    pcrMultiple: {
+        title: "My PCR has multiple bands",
+        text: "Multiple bands can have more than one cause. Review primer specificity and reaction conditions before changing the protocol.",
+        internalTarget: "pcr-troubleshooting-tool",
+        professionalTitle: "Check primers with Primer-BLAST",
+        professionalUrl: "https://www.ncbi.nlm.nih.gov/tools/primer-blast/"
+    },
+    strangeSequence: {
+        title: "My sequence contains strange characters",
+        text: "Start with the DNA Analyzer. It accepts A, T, G, C and optional N. Other IUPAC ambiguity symbols are not interpreted by this beginner tool.",
+        internalTarget: "dna-tool",
+        professionalTitle: "Read NCBI FASTA format guidance",
+        professionalUrl: "https://www.ncbi.nlm.nih.gov/genbank/fastaformat"
+    },
+    unknownSequence: {
+        title: "I don't know what my sequence is",
+        text: "Use the Identify a Sequence workflow. A professional similarity search can suggest related sequences, but similarity does not automatically prove identical function.",
+        workflow: "identifySequence",
+        professionalTitle: "Open NCBI BLAST",
+        professionalUrl: "https://blast.ncbi.nlm.nih.gov/Blast.cgi"
+    },
+    primerGc: {
+        title: "My primer has unusual GC content",
+        text: "Use the Primer Quick Check for a simple composition check, then evaluate specificity and secondary structures with dedicated tools.",
+        internalTarget: "primer-tool",
+        professionalTitle: "Open IDT OligoAnalyzer",
+        professionalUrl: "https://www.idtdna.com/pages/tools/oligoanalyzer"
+    },
+    database: {
+        title: "I don't know which database to use",
+        text: "Describe the biological task in the Resource Finder rather than guessing a database name.",
+        internalTarget: "resource-finder"
+    },
+    gene: {
+        title: "I can't find my gene",
+        text: "Check organism, gene symbol/identifier, and genome context. NCBI Gene and Ensembl are useful starting points.",
+        searchQuery: "gene genomic location"
+    },
+    structure: {
+        title: "I need a protein structure",
+        text: "Start with experimental structure databases such as RCSB PDB or PDBe. If none is available, consider prediction/modeling resources and inspect confidence.",
+        searchQuery: "protein structure"
+    },
+    sequencing: {
+        title: "I need sequencing data",
+        text: "For raw reads, start with SRA or ENA. For expression-focused studies, GEO or Expression Atlas may be more appropriate.",
+        searchQuery: "raw sequencing reads"
+    },
+    next: {
+        title: "I don't know what to do next",
+        text: "Return to the task cards and choose the biological goal closest to your real question. The app is organized around tasks rather than database names.",
+        internalTarget: "tasks"
+    }
+};
+
+
+// =====================================
+// Shared DOM Elements and State
+// =====================================
+
+const workflowPanel = document.querySelector("#workflowPanel");
+const taskButtons = document.querySelectorAll("[data-workflow]");
+const searchForm = document.querySelector("#searchForm");
+const searchInput = document.querySelector("#searchInput");
+const searchSuggestions = document.querySelector("#searchSuggestions");
+const searchChips = document.querySelectorAll(".search-chip");
+const resourceTypeFilter = document.querySelector("#resourceTypeFilter");
+const resourceCategoryFilter = document.querySelector("#resourceCategoryFilter");
+const resourceFilterReset = document.querySelector("#resourceFilterReset");
+const resourceResults = document.querySelector("#resourceResults");
+const categoryButtons = document.querySelectorAll("[data-category]");
+const currentYear = document.querySelector("#currentYear");
+
+let resourceSearchResults = resources.slice();
+let currentSearchText = "";
+let lastDnaAnalysis = null;
+
+
+// =====================================
+// UI Helpers
+// =====================================
+
+function escapeHTML(value) {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function scrollToSection(sectionId) {
+    const element = document.querySelector("#" + sectionId);
+
+    if (element) {
+        element.scrollIntoView({
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+            block: "start"
+        });
+    }
+}
+
+function formatNumber(value, decimals) {
+    if (!Number.isFinite(value)) {
+        return "N/A";
+    }
+
+    return Number(value.toFixed(decimals)).toString();
+}
+
+function formatPercentage(value) {
+    if (!Number.isFinite(value)) {
+        return "N/A";
+    }
+
+    return value.toFixed(1) + "%";
+}
+
+function setEmptyResult(container, message) {
+    container.className = "tool-result empty-result";
+    container.innerHTML = "<p>" + escapeHTML(message) + "</p>";
+}
+
+function createExternalLink(label, url, className) {
+    return '<a class="' + className + '" href="' + url + '" target="_blank" rel="noopener noreferrer">' + escapeHTML(label) + " ↗</a>";
+}
+
+
+// =====================================
+// Resource Search
+// =====================================
+
+function normalizeSearchText(value) {
+    return String(value)
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, " ");
+}
+
+function getExpandedSearchTerms(query) {
+    const normalized = normalizeSearchText(query);
+    const terms = [normalized];
+
+    normalized.split(" ").forEach(function (word) {
+        if (word.length > 2 && !terms.includes(word)) {
+            terms.push(word);
         }
     });
 
-    Object.keys(searchSynonyms).forEach(function (synonymKey) {
-        if (normalizedSearch.includes(synonymKey)) {
-            searchSynonyms[synonymKey].forEach(function (synonym) {
-                searchTerms.push(synonym.toLowerCase());
+    Object.keys(searchSynonyms).forEach(function (key) {
+        if (normalized.includes(key)) {
+            searchSynonyms[key].forEach(function (synonym) {
+                const normalizedSynonym = normalizeSearchText(synonym);
+                if (!terms.includes(normalizedSynonym)) {
+                    terms.push(normalizedSynonym);
+                }
             });
         }
     });
 
-    return searchTerms;
+    return terms;
 }
 
-function findMatchingResources(searchText) {
-    const searchTerms = getSearchTerms(searchText);
+function scoreResource(resource, query) {
+    const normalizedQuery = normalizeSearchText(query);
+    const terms = getExpandedSearchTerms(query);
 
-    return resources.filter(function (resource) {
-        const searchableText = [
-            resource.name,
-            resource.type,
-            resource.category,
-            resource.description,
-            resource.keywords.join(" "),
-            resource.tasks.join(" ")
-        ]
-            .join(" ")
-            .toLowerCase();
+    const name = normalizeSearchText(resource.name);
+    const organization = normalizeSearchText(resource.organization);
+    const category = normalizeSearchText(resource.category);
+    const type = normalizeSearchText(resource.type);
+    const description = normalizeSearchText(resource.description);
+    const keywords = resource.keywords.map(normalizeSearchText);
+    const tasks = resource.tasks.map(normalizeSearchText);
+    const synonyms = resource.synonyms.map(normalizeSearchText);
 
-        return searchTerms.some(function (term) {
-            return searchableText.includes(term);
+    let score = 0;
+
+    if (name === normalizedQuery) score += 140;
+    if (name.includes(normalizedQuery)) score += 65;
+
+    tasks.forEach(function (task) {
+        if (task === normalizedQuery) score += 85;
+        else if (task.includes(normalizedQuery) || normalizedQuery.includes(task)) score += 48;
+    });
+
+    if (category === normalizedQuery) score += 70;
+    else if (category.includes(normalizedQuery)) score += 38;
+
+    if (type === normalizedQuery) score += 38;
+    else if (type.includes(normalizedQuery)) score += 20;
+
+    keywords.forEach(function (keyword) {
+        if (keyword === normalizedQuery) score += 46;
+        else if (keyword.includes(normalizedQuery) || normalizedQuery.includes(keyword)) score += 24;
+    });
+
+    synonyms.forEach(function (synonym) {
+        if (synonym === normalizedQuery) score += 42;
+        else if (synonym.includes(normalizedQuery) || normalizedQuery.includes(synonym)) score += 20;
+    });
+
+    if (description.includes(normalizedQuery)) score += 14;
+    if (organization.includes(normalizedQuery)) score += 12;
+
+    terms.forEach(function (term) {
+        if (name.includes(term)) score += 11;
+        if (category.includes(term)) score += 8;
+        if (description.includes(term)) score += 3;
+
+        keywords.forEach(function (keyword) {
+            if (keyword.includes(term)) score += 6;
+        });
+
+        tasks.forEach(function (task) {
+            if (task.includes(term)) score += 7;
+        });
+
+        synonyms.forEach(function (synonym) {
+            if (synonym.includes(term)) score += 5;
         });
     });
+
+    return score;
 }
 
-function getCategoryClass(resource) {
-    const category = resource.category;
+function rankResources(query) {
+    return resources
+        .map(function (resource) {
+            return {
+                resource: resource,
+                score: scoreResource(resource, query)
+            };
+        })
+        .filter(function (item) {
+            return item.score > 0;
+        })
+        .sort(function (a, b) {
+            if (b.score !== a.score) {
+                return b.score - a.score;
+            }
 
-    if (category === "Sequence & Alignment") return "accent-sequence";
-    if (category === "Genes & Genomes") return "accent-genome";
-    if (category === "Protein Information") return "accent-protein";
-    if (category === "Protein Structure") return "accent-structure";
-    if (category === "Scientific Literature") return "accent-literature";
-    if (category === "Gene Expression & Sequencing Data") return "accent-data";
-    if (category === "Pathways & Functional Analysis") return "accent-pathway";
-    if (category === "Genetic Variation") return "accent-variant";
-    if (category === "PCR & Primer Design") return "accent-primer";
-    if (category === "Molecular Biology & Cloning") return "accent-cloning";
-
-    return "accent-general";
+            return a.resource.name.localeCompare(b.resource.name);
+        })
+        .map(function (item) {
+            return item.resource;
+        });
 }
 
-// Filters are used as a simple directory browser.
-// Starting browse mode clears an old text search so a previous query
-// cannot silently hide an otherwise valid category or resource type.
-function startBrowseMode() {
-    hasSearched = false;
-    lastSearchText = "";
-    lastSearchResults = resources;
-    searchInput.value = "";
+function getResourceAccentClass(resource) {
+    if (resource.category === "Sequence & Alignment") return "accent-sequence";
+    if (resource.category === "Genes & Genomes") return "accent-genome";
+    if (resource.category === "Protein Information") return "accent-protein";
+    if (resource.category === "Protein Structure") return "accent-structure";
+    if (resource.category === "Scientific Literature") return "accent-literature";
+    if (resource.category === "Gene Expression & Sequencing Data") return "accent-data";
+    if (resource.category === "Pathways & Functional Analysis") return "accent-analysis";
+    if (resource.category === "Genetic Variation") return "accent-warning";
+    if (resource.category === "PCR & Primer Design") return "accent-lab";
+    if (resource.category === "Molecular Biology & Cloning") return "accent-sequence";
+    if (resource.category === "Model Organisms") return "accent-genome";
+    return "accent-neutral";
+}
 
-    quickSearchButtons.forEach(function (button) {
-        button.classList.remove("active");
+function getFilteredResourceResults() {
+    return resourceSearchResults.filter(function (resource) {
+        const typeMatches =
+            resourceTypeFilter.value === "All" ||
+            resource.type === resourceTypeFilter.value;
+
+        const categoryMatches =
+            resourceCategoryFilter.value === "All" ||
+            resource.category === resourceCategoryFilter.value;
+
+        return typeMatches && categoryMatches;
     });
 }
 
-function getFilteredResults() {
-    return lastSearchResults.filter(function (resource) {
-        const matchesType = activeTypeFilter === "All" || resource.type === activeTypeFilter;
-        const matchesCategory = activeCategoryFilter === "All" || resource.category === activeCategoryFilter;
-        return matchesType && matchesCategory;
-    });
-}
+function renderResourceResults() {
+    const results = getFilteredResourceResults();
+    resourceResults.innerHTML = "";
 
-function displayResources() {
-    const matchingResources = getFilteredResults();
-    resultsArea.innerHTML = "";
-
-    if (lastSearchResults.length === 0) {
-        resultsArea.innerHTML = `
+    if (resourceSearchResults.length === 0) {
+        resourceResults.innerHTML = `
             <div class="alert alert-warning" role="alert">
                 <strong>No matching resource was found.</strong>
                 Try another term such as sequence, protein, gene, genome, PCR, structure, or literature.
@@ -885,11 +1493,11 @@ function displayResources() {
         return;
     }
 
-    if (matchingResources.length === 0) {
-        resultsArea.innerHTML = `
+    if (results.length === 0) {
+        resourceResults.innerHTML = `
             <div class="alert alert-info" role="alert">
-                <strong>No resources match this browse filter.</strong>
-                Reset the browse filters or choose another resource type or biological category.
+                <strong>Your current filters hide all results.</strong>
+                Try another type/category or use <strong>Reset filters</strong>.
             </div>
         `;
         return;
@@ -898,315 +1506,574 @@ function displayResources() {
     const heading = document.createElement("div");
     heading.className = "results-heading";
 
-    const title = document.createElement("h2");
+    const title = document.createElement("h3");
     title.textContent = "Recommended resources";
 
     const count = document.createElement("span");
     count.className = "result-count";
 
-    if (hasSearched) {
-        count.textContent = `${matchingResources.length} resources found for “${lastSearchText}”`;
-    } else if (activeCategoryFilter !== "All") {
-        count.textContent = `${matchingResources.length} resources in “${activeCategoryFilter}”`;
-    } else if (activeTypeFilter !== "All") {
-        count.textContent = `${matchingResources.length} resources with type “${activeTypeFilter}”`;
+    if (currentSearchText) {
+        count.textContent = results.length + ' resources found for "' + currentSearchText + '"';
+    } else if (resourceCategoryFilter.value !== "All") {
+        count.textContent = results.length + ' resources in "' + resourceCategoryFilter.value + '"';
+    } else if (resourceTypeFilter.value !== "All") {
+        count.textContent = results.length + ' resources of type "' + resourceTypeFilter.value + '"';
     } else {
-        count.textContent = `${matchingResources.length} resources`;
+        count.textContent = results.length + " resources";
     }
 
     heading.appendChild(title);
     heading.appendChild(count);
 
     const row = document.createElement("div");
-    row.className = "row g-4";
+    row.className = "row g-3";
 
-    matchingResources.forEach(function (resource) {
+    results.forEach(function (resource) {
         const column = document.createElement("div");
         column.className = "col-12 col-md-6 col-xl-4";
 
-        const categoryClass = getCategoryClass(resource);
-        const keywordTags = resource.keywords
+        const tags = resource.keywords
             .slice(0, 4)
             .map(function (keyword) {
-                return `<span class="keyword-tag">#${keyword}</span>`;
+                return '<span class="keyword-tag">#' + escapeHTML(keyword) + "</span>";
             })
             .join("");
 
         const learnLink = resource.learnUrl
-            ? `<a class="learn-link-small" href="${resource.learnUrl}" target="_blank" rel="noopener noreferrer">📘 ${resource.learnTitle} ↗</a>`
+            ? createExternalLink(
+                resource.learnTitle || "Learn how to use this resource",
+                resource.learnUrl,
+                "resource-learn-link"
+            )
             : "";
 
-        const goodFor = resource.tasks.slice(0, 2).join("; ");
-
         column.innerHTML = `
-            <article class="resource-record ${categoryClass}">
-                <div class="resource-record-body">
-                    <div class="resource-topline">
-                        <h3 class="resource-name">${resource.name}</h3>
-                        <div class="badge-stack">
-                            <span class="badge-category">${resource.category}</span>
-                            <span class="badge-type">${resource.type}</span>
-                        </div>
+            <article class="resource-card ${getResourceAccentClass(resource)}">
+                <div class="resource-card-top">
+                    <div>
+                        <span class="resource-organization">${escapeHTML(resource.organization)}</span>
+                        <h4>${escapeHTML(resource.name)}</h4>
                     </div>
-
-                    <p class="resource-description">${resource.description}</p>
-                    <p class="resource-good-for"><strong>Good for:</strong> ${goodFor}.</p>
-
-                    <div class="resource-keywords">${keywordTags}</div>
-
-                    <details class="resource-help">
-                        <summary>How do I use this resource?</summary>
-                        <p>Start with the task above, then check the resource's own help or documentation before interpreting research results.</p>
-                        ${learnLink}
-                    </details>
-
-                    <div class="resource-card-actions">
-                        <a class="resource-link" href="${resource.url}" target="_blank" rel="noopener noreferrer">Visit Resource →</a>
-                    </div>
+                    <span class="resource-type-badge">${escapeHTML(resource.type)}</span>
                 </div>
+
+                <span class="resource-category">${escapeHTML(resource.category)}</span>
+
+                <p>${escapeHTML(resource.description)}</p>
+
+                <div class="good-for-block">
+                    <strong>Good for</strong>
+                    <span>${escapeHTML(resource.tasks.slice(0, 2).join(" · "))}</span>
+                </div>
+
+                <div class="resource-tags">${tags}</div>
+
+                ${learnLink ? '<div class="resource-learning">' + learnLink + "</div>" : ""}
+
+                <a
+                    class="resource-open-link"
+                    href="${resource.url}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Visit Resource →
+                </a>
             </article>
         `;
 
         row.appendChild(column);
     });
 
-    resultsArea.appendChild(heading);
-    resultsArea.appendChild(row);
+    resourceResults.appendChild(heading);
+    resourceResults.appendChild(row);
 }
 
-function runSearch(searchText) {
-    const cleanSearchText = searchText.trim();
+function performResourceSearch(query) {
+    const cleanQuery = String(query).trim();
 
-    if (cleanSearchText === "") {
-        resultsArea.innerHTML = `
+    if (!cleanQuery) {
+        resourceResults.innerHTML = `
             <div class="alert alert-info" role="alert">
-                Describe a biological task or data type first. For example: protein, alignment, genome, PCR, or literature.
+                Describe a biological task first. For example: identify a DNA sequence, design primers, or find RNA-seq data.
             </div>
         `;
         return;
     }
 
-    searchInput.value = cleanSearchText;
-    lastSearchText = cleanSearchText;
-    lastSearchResults = findMatchingResources(cleanSearchText);
-    hasSearched = true;
-    activeTypeFilter = "All";
-    activeCategoryFilter = "All";
-    categoryFilter.value = "All";
+    currentSearchText = cleanQuery;
+    searchInput.value = cleanQuery;
+    resourceSearchResults = rankResources(cleanQuery);
 
-    typeFilterButtons.forEach(function (button) {
-        button.classList.toggle("active", button.dataset.type === "All");
-    });
+    // A new search starts from neutral filters.
+    resourceTypeFilter.value = "All";
+    resourceCategoryFilter.value = "All";
 
-    displayResources();
+    renderResourceResults();
+}
+
+function browseResourceCategory(category) {
+    currentSearchText = "";
+    searchInput.value = "";
+    resourceSearchResults = resources.slice();
+    resourceTypeFilter.value = "All";
+    resourceCategoryFilter.value = category;
+    renderResourceResults();
+    scrollToSection("resource-finder");
+}
+
+function resetResourceFinder() {
+    currentSearchText = "";
+    searchInput.value = "";
+    resourceSearchResults = resources.slice();
+    resourceTypeFilter.value = "All";
+    resourceCategoryFilter.value = "All";
+    renderResourceResults();
 }
 
 searchForm.addEventListener("submit", function (event) {
     event.preventDefault();
-    runSearch(searchInput.value);
+    performResourceSearch(searchInput.value);
 });
 
-quickSearchButtons.forEach(function (button) {
+searchChips.forEach(function (button) {
     button.addEventListener("click", function () {
-        quickSearchButtons.forEach(function (otherButton) {
-            otherButton.classList.remove("active");
-        });
-        button.classList.add("active");
-        runSearch(button.dataset.search);
+        performResourceSearch(button.dataset.search);
     });
 });
 
-exampleSearchButtons.forEach(function (button) {
+resourceTypeFilter.addEventListener("change", function () {
+    // Filters browse the full directory if there is no active text search.
+    if (!currentSearchText) {
+        resourceSearchResults = resources.slice();
+    }
+    renderResourceResults();
+});
+
+resourceCategoryFilter.addEventListener("change", function () {
+    if (!currentSearchText) {
+        resourceSearchResults = resources.slice();
+    }
+    renderResourceResults();
+});
+
+resourceFilterReset.addEventListener("click", function () {
+    resourceTypeFilter.value = "All";
+    resourceCategoryFilter.value = "All";
+    renderResourceResults();
+});
+
+categoryButtons.forEach(function (button) {
     button.addEventListener("click", function () {
-        runSearch(button.dataset.search);
+        browseResourceCategory(button.dataset.category);
     });
 });
 
-typeFilterButtons.forEach(function (button) {
-    button.addEventListener("click", function () {
-        startBrowseMode();
 
-        // A type filter works independently from the category filter.
-        activeCategoryFilter = "All";
-        categoryFilter.value = "All";
-        activeTypeFilter = button.dataset.type;
+// Search suggestions remain fully local.
+const commonTaskSuggestions = [
+    "identify a DNA sequence",
+    "design PCR primers",
+    "protein structure",
+    "raw RNA-seq reads",
+    "gene genomic location",
+    "protein domains",
+    "scientific literature",
+    "pathway analysis",
+    "variant information",
+    "genome browser"
+];
 
-        typeFilterButtons.forEach(function (otherButton) {
-            otherButton.classList.remove("active");
-        });
+function getSearchSuggestions(query) {
+    const normalized = normalizeSearchText(query);
 
-        button.classList.add("active");
-        displayResources();
-    });
-});
-
-categoryFilter.addEventListener("change", function () {
-    startBrowseMode();
-
-    // A biological category also works independently from type filters.
-    activeTypeFilter = "All";
-
-    typeFilterButtons.forEach(function (button) {
-        button.classList.toggle("active", button.dataset.type === "All");
-    });
-
-    activeCategoryFilter = categoryFilter.value;
-    displayResources();
-});
-
-clearFilters.addEventListener("click", function () {
-    startBrowseMode();
-    activeTypeFilter = "All";
-    activeCategoryFilter = "All";
-    categoryFilter.value = "All";
-
-    typeFilterButtons.forEach(function (button) {
-        button.classList.toggle("active", button.dataset.type === "All");
-    });
-
-    displayResources();
-});
-
-
-// ============================================================
-// Learn & Troubleshoot Renderer
-// ============================================================
-
-function createHelpResourceHTML(resource) {
-    return `
-        <a class="help-resource" href="${resource.url}" target="_blank" rel="noopener noreferrer">
-            <span class="help-resource-title">${resource.title} ↗</span>
-            <span class="help-resource-meta">${resource.organization} · ${resource.sourceType}</span>
-            <span class="help-resource-description">${resource.description}</span>
-        </a>
-    `;
-}
-
-function createHelpGroup(title, icon, resourcesList) {
-    const links = resourcesList.map(createHelpResourceHTML).join("");
-
-    return `
-        <div class="col-lg-4">
-            <div class="help-group">
-                <h5>${icon} ${title}</h5>
-                ${links}
-            </div>
-        </div>
-    `;
-}
-
-function renderHelpResources(topic, containerSelector, heading) {
-    const container = document.querySelector(containerSelector);
-    const topicResources = helpResources[topic];
-    const accordionId = `${topic}HelpAccordion`;
-    const collapseId = `${topic}HelpCollapse`;
-
-    container.innerHTML = `
-        <div class="accordion help-accordion" id="${accordionId}">
-            <div class="accordion-item">
-                <h4 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="false" aria-controls="${collapseId}">
-                        Need help? ${heading}
-                    </button>
-                </h4>
-                <div id="${collapseId}" class="accordion-collapse collapse" data-bs-parent="#${accordionId}">
-                    <div class="accordion-body">
-                        <p class="help-intro">${helpIntroductions[topic]}</p>
-                        <div class="row g-3">
-                            ${createHelpGroup("Learn", "📘", topicResources.learn)}
-                            ${createHelpGroup("Troubleshoot", "🛠", topicResources.troubleshoot)}
-                            ${createHelpGroup("Professional Tool", "🔬", topicResources.professionalTools)}
-                        </div>
-                        <div class="safety-note">
-                            Educational calculations and explanations in this app are simplified. For experimentally important decisions, verify protocols, parameters, and tool documentation with the linked official scientific resources.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-renderHelpResources("sequence", "#sequenceHelp", "Understanding DNA sequences");
-renderHelpResources("primer", "#primerHelp", "Primer design and troubleshooting");
-renderHelpResources("pcr", "#pcrHelp", "PCR Help Center");
-renderHelpResources("dilution", "#dilutionHelp", "Understanding dilutions");
-renderHelpResources("restriction", "#restrictionHelp", "Restriction enzymes and digestion");
-
-
-// ============================================================
-// Shared Sequence Functions
-// ============================================================
-
-// Escape user-provided text before placing it inside innerHTML.
-// This keeps FASTA headers and error messages as plain text.
-function escapeHTML(text) {
-    return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-function cleanSequenceInput(rawInput, allowN) {
-    const trimmedInput = rawInput.trim();
-
-    if (trimmedInput === "") {
-        return { error: "Please enter a DNA sequence." };
+    if (normalized.length < 2) {
+        return [];
     }
 
-    const lines = trimmedInput.split(/\r?\n/);
-    let fastaHeader = "";
-    let sequenceLines = lines.slice();
+    const suggestions = [];
 
-    const firstNonEmptyIndex = sequenceLines.findIndex(function (line) {
+    commonTaskSuggestions.forEach(function (task) {
+        if (normalizeSearchText(task).includes(normalized)) {
+            suggestions.push({
+                label: task,
+                value: task
+            });
+        }
+    });
+
+    resources.forEach(function (resource) {
+        if (
+            normalizeSearchText(resource.name).includes(normalized) ||
+            normalizeSearchText(resource.category).includes(normalized)
+        ) {
+            suggestions.push({
+                label: resource.name + " · " + resource.category,
+                value: resource.name
+            });
+        }
+    });
+
+    const unique = [];
+    const usedValues = [];
+
+    suggestions.forEach(function (suggestion) {
+        if (!usedValues.includes(suggestion.value) && unique.length < 6) {
+            usedValues.push(suggestion.value);
+            unique.push(suggestion);
+        }
+    });
+
+    return unique;
+}
+
+function renderSearchSuggestions() {
+    const suggestions = getSearchSuggestions(searchInput.value);
+    searchSuggestions.innerHTML = "";
+
+    if (suggestions.length === 0) {
+        searchSuggestions.classList.add("d-none");
+        return;
+    }
+
+    suggestions.forEach(function (suggestion) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "search-suggestion";
+        button.setAttribute("role", "option");
+        button.textContent = suggestion.label;
+
+        button.addEventListener("click", function () {
+            searchSuggestions.classList.add("d-none");
+            performResourceSearch(suggestion.value);
+        });
+
+        searchSuggestions.appendChild(button);
+    });
+
+    searchSuggestions.classList.remove("d-none");
+}
+
+searchInput.addEventListener("input", renderSearchSuggestions);
+searchInput.addEventListener("focus", renderSearchSuggestions);
+
+document.addEventListener("click", function (event) {
+    if (!event.target.closest(".search-input-container")) {
+        searchSuggestions.classList.add("d-none");
+    }
+});
+
+
+// =====================================
+// Workflow Navigator
+// =====================================
+
+function renderWorkflowActions(actions) {
+    if (!actions || actions.length === 0) {
+        return "";
+    }
+
+    return actions
+        .map(function (action) {
+            if (action.kind === "external") {
+                return createExternalLink(action.label, action.url, "workflow-action workflow-action-external");
+            }
+
+            if (action.kind === "search") {
+                return '<button class="workflow-action" type="button" data-workflow-search="' + escapeHTML(action.query) + '">' + escapeHTML(action.label) + "</button>";
+            }
+
+            return '<button class="workflow-action" type="button" data-workflow-scroll="' + escapeHTML(action.target) + '">' + escapeHTML(action.label) + "</button>";
+        })
+        .join("");
+}
+
+function renderSequenceTypeChooser() {
+    return `
+        <div class="sequence-type-chooser">
+            <h4>What kind of sequence might you have?</h4>
+            <div class="sequence-type-buttons">
+                <button type="button" data-sequence-type="dna">DNA</button>
+                <button type="button" data-sequence-type="rna">RNA</button>
+                <button type="button" data-sequence-type="protein">Protein</button>
+                <button type="button" data-sequence-type="unknown">Unknown</button>
+            </div>
+            <div id="sequenceTypeGuidance" class="sequence-type-guidance">
+                Choose the closest option. If you truly do not know, select Unknown.
+            </div>
+        </div>
+    `;
+}
+
+function renderWorkflow(workflowKey) {
+    const workflow = workflows[workflowKey];
+
+    if (!workflow) {
+        return;
+    }
+
+    const steps = workflow.steps
+        .map(function (step, index) {
+            return `
+                <li>
+                    <span>${index + 1}</span>
+                    <p>${escapeHTML(step)}</p>
+                </li>
+            `;
+        })
+        .join("");
+
+    workflowPanel.innerHTML = `
+        <div class="workflow-header">
+            <div>
+                <span class="workflow-kicker">GUIDED WORKFLOW</span>
+                <h2>${escapeHTML(workflow.title)}</h2>
+                <p>${escapeHTML(workflow.description)}</p>
+            </div>
+        </div>
+
+        <ol class="workflow-steps">${steps}</ol>
+
+        ${workflow.sequenceChooser ? renderSequenceTypeChooser() : ""}
+
+        <div class="workflow-actions">
+            ${renderWorkflowActions(workflow.actions)}
+        </div>
+    `;
+
+    scrollToSection("workflow");
+}
+
+taskButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+        renderWorkflow(button.dataset.workflow);
+    });
+});
+
+workflowPanel.addEventListener("click", function (event) {
+    const scrollButton = event.target.closest("[data-workflow-scroll]");
+    const searchButton = event.target.closest("[data-workflow-search]");
+    const sequenceTypeButton = event.target.closest("[data-sequence-type]");
+
+    if (scrollButton) {
+        scrollToSection(scrollButton.dataset.workflowScroll);
+    }
+
+    if (searchButton) {
+        performResourceSearch(searchButton.dataset.workflowSearch);
+        scrollToSection("resource-finder");
+    }
+
+    if (sequenceTypeButton) {
+        renderSequenceTypeGuidance(sequenceTypeButton.dataset.sequenceType);
+    }
+});
+
+function renderSequenceTypeGuidance(type) {
+    const container = document.querySelector("#sequenceTypeGuidance");
+
+    if (!container) {
+        return;
+    }
+
+    if (type === "dna") {
+        container.innerHTML = `
+            <strong>DNA:</strong>
+            clean and inspect it locally first, then use a nucleotide similarity search if identification is the goal.
+            <div class="workflow-actions mt-3">
+                <button type="button" class="workflow-action" data-workflow-scroll="dna-tool">Analyze DNA</button>
+                <button type="button" class="workflow-action" data-workflow-search="DNA sequence similarity BLAST">Find DNA similarity tools</button>
+            </div>
+        `;
+        return;
+    }
+
+    if (type === "rna") {
+        container.innerHTML = `
+            <strong>RNA:</strong>
+            this built-in DNA analyzer does not interpret U bases. Use a nucleotide-aware professional resource and check the biological context of the RNA.
+            <div class="workflow-actions mt-3">
+                <button type="button" class="workflow-action" data-workflow-search="RNA nucleotide sequence BLAST">Find RNA/nucleotide resources</button>
+            </div>
+        `;
+        return;
+    }
+
+    if (type === "protein") {
+        container.innerHTML = `
+            <strong>Protein:</strong>
+            use a protein similarity search and protein annotation resources. A sequence match can suggest related proteins, but similarity alone does not prove identical biological function.
+            <div class="workflow-actions mt-3">
+                <button type="button" class="workflow-action" data-workflow-search="protein sequence similarity">Find protein resources</button>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = `
+        <strong>Unknown:</strong>
+        do not infer sequence type from a short string with confidence. Check the original file/experiment metadata and use a professional similarity-search workflow appropriate to the likely molecule type.
+        <div class="workflow-actions mt-3">
+            <button type="button" class="workflow-action" data-workflow-search="sequence similarity">Find sequence-search tools</button>
+        </div>
+    `;
+}
+
+
+// =====================================
+// Contextual Help Renderer
+// =====================================
+
+function createHelpItemHTML(item) {
+    return `
+        <article class="help-link-card">
+            <span>${escapeHTML(item.organization)}</span>
+            <strong>${escapeHTML(item.title)}</strong>
+            <small>${escapeHTML(item.sourceType || item.type || "Official resource")}</small>
+            <p>${escapeHTML(item.description)}</p>
+            <a href="${item.url}" target="_blank" rel="noopener noreferrer">Open official resource ↗</a>
+        </article>
+    `;
+}
+
+function createHelpGroup(title, icon, items) {
+    if (!items || items.length === 0) {
+        return "";
+    }
+
+    return `
+        <div class="help-group">
+            <h5>${icon} ${escapeHTML(title)}</h5>
+            <div class="help-link-grid">
+                ${items.map(createHelpItemHTML).join("")}
+            </div>
+        </div>
+    `;
+}
+
+function renderHelpResources(topic, selector, heading) {
+    const container = document.querySelector(selector);
+    const data = helpResources[topic];
+
+    if (!container || !data) {
+        return;
+    }
+
+    container.innerHTML = `
+        <details class="help-details">
+            <summary>Need help with this step?</summary>
+            <div class="help-details-body">
+                <h4>${escapeHTML(heading)}</h4>
+                ${createHelpGroup("Learn", "📘", data.learn)}
+                ${createHelpGroup("Troubleshoot", "🛠", data.troubleshoot)}
+                ${createHelpGroup("Professional Tool", "🔬", data.professionalTools)}
+                ${createHelpGroup("Official Documentation", "↗", data.officialDocumentation)}
+            </div>
+        </details>
+    `;
+}
+
+
+// =====================================
+// DNA Sequence Analyzer
+// =====================================
+
+const dnaForm = document.querySelector("#dnaForm");
+const dnaInput = document.querySelector("#dnaInput");
+const dnaReset = document.querySelector("#dnaReset");
+const dnaResult = document.querySelector("#dnaResult");
+const sequenceNextSteps = document.querySelector("#sequenceNextSteps");
+
+function cleanSequenceInput(rawInput, allowN) {
+    const trimmedInput = String(rawInput).trim();
+
+    if (!trimmedInput) {
+        return {
+            error: "Please enter a DNA sequence."
+        };
+    }
+
+    const rawLines = trimmedInput.split(/\r?\n/);
+    const nonEmptyLines = rawLines.filter(function (line) {
         return line.trim() !== "";
     });
 
-    if (firstNonEmptyIndex !== -1 && sequenceLines[firstNonEmptyIndex].trim().startsWith(">")) {
-        fastaHeader = sequenceLines[firstNonEmptyIndex].trim();
-        sequenceLines.splice(firstNonEmptyIndex, 1);
+    let header = "";
+    let fastaDetected = false;
+    let sequenceLines = nonEmptyLines.slice();
+
+    if (sequenceLines[0] && sequenceLines[0].trim().startsWith(">")) {
+        fastaDetected = true;
+        header = sequenceLines[0].trim().slice(1).trim();
+        sequenceLines = sequenceLines.slice(1);
     }
 
-    const hasAnotherHeader = sequenceLines.some(function (line) {
+    const extraHeader = sequenceLines.some(function (line) {
         return line.trim().startsWith(">");
     });
 
-    if (hasAnotherHeader) {
-        return { error: "This beginner tool accepts one FASTA sequence at a time. We found more than one FASTA header." };
+    if (extraHeader) {
+        return {
+            error: "This beginner tool accepts one FASTA record at a time. We found more than one FASTA header."
+        };
     }
 
-    const sequence = sequenceLines.join("").replace(/\s/g, "").toUpperCase();
+    const sequence = sequenceLines
+        .join("")
+        .replace(/\s+/g, "")
+        .toUpperCase();
 
-    if (sequence === "") {
-        return { error: "The FASTA header was found, but there is no DNA sequence underneath it." };
+    if (!sequence) {
+        return {
+            error: fastaDetected
+                ? "A FASTA header was found, but no sequence was found below it."
+                : "Please enter a DNA sequence."
+        };
     }
 
     const allowedPattern = allowN ? /^[ATGCN]+$/ : /^[ATGC]+$/;
 
     if (!allowedPattern.test(sequence)) {
-        const validCharactersPattern = allowN ? /[ATGCN]/g : /[ATGC]/g;
         const invalidCharacters = Array.from(
-            new Set(sequence.replace(validCharactersPattern, "").split(""))
-        ).join(", ");
+            new Set(
+                sequence
+                    .split("")
+                    .filter(function (character) {
+                        return allowN
+                            ? !["A", "T", "G", "C", "N"].includes(character)
+                            : !["A", "T", "G", "C"].includes(character);
+                    })
+            )
+        );
+
         return {
-            error: `We found unsupported characters${invalidCharacters ? `: ${invalidCharacters}` : ""}. DNA sequences normally use nucleotide symbols such as A, T, G and C${allowN ? ", with N sometimes used for an unknown base" : ""}.`,
-            fastaHeader: fastaHeader
+            error:
+                "Unsupported character(s): " +
+                invalidCharacters.join(", ") +
+                ". " +
+                (allowN
+                    ? "This tool supports A, T, G, C, and N."
+                    : "This primer check supports A, T, G, and C only.")
         };
     }
 
     return {
         sequence: sequence,
-        fastaHeader: fastaHeader
+        header: header,
+        fastaDetected: fastaDetected
     };
 }
 
 function countBases(sequence) {
-    const counts = { A: 0, T: 0, G: 0, C: 0, N: 0 };
+    const counts = {
+        A: 0,
+        T: 0,
+        G: 0,
+        C: 0,
+        N: 0
+    };
 
     sequence.split("").forEach(function (base) {
-        if (counts[base] !== undefined) {
+        if (Object.prototype.hasOwnProperty.call(counts, base)) {
             counts[base] += 1;
         }
     });
@@ -1215,16 +2082,20 @@ function countBases(sequence) {
 }
 
 function calculateSequencePercentages(counts) {
-    const calledBases = counts.A + counts.T + counts.G + counts.C;
+    const canonicalBaseCount = counts.A + counts.T + counts.G + counts.C;
 
-    if (calledBases === 0) {
-        return { gc: null, at: null, calledBases: 0 };
+    if (canonicalBaseCount === 0) {
+        return {
+            gc: null,
+            at: null,
+            canonicalBaseCount: 0
+        };
     }
 
     return {
-        gc: ((counts.G + counts.C) / calledBases) * 100,
-        at: ((counts.A + counts.T) / calledBases) * 100,
-        calledBases: calledBases
+        gc: ((counts.G + counts.C) / canonicalBaseCount) * 100,
+        at: ((counts.A + counts.T) / canonicalBaseCount) * 100,
+        canonicalBaseCount: canonicalBaseCount
     };
 }
 
@@ -1246,53 +2117,35 @@ function getReverseComplement(sequence) {
         .join("");
 }
 
-function formatNumber(number, decimals) {
-    return Number(number).toFixed(decimals);
-}
+function getSequencePreview(sequence) {
+    const previewLimit = 3000;
 
-function formatPercentage(value) {
-    if (value === null) {
-        return "N/A";
+    if (sequence.length <= previewLimit) {
+        return sequence;
     }
 
-    return `${formatNumber(value, 1)}%`;
+    return sequence.slice(0, 1500) + "\n… preview shortened …\n" + sequence.slice(-1500);
 }
 
-function showSequenceError(message, fastaDetected) {
-    const dnaResult = document.querySelector("#dnaResult");
-    const sequenceContext = document.querySelector("#sequenceContext");
-    const fastaMessage = fastaDetected
-        ? " A line beginning with > is a FASTA definition line (header); the sequence should follow on the next line or lines."
-        : "";
+function copyTextToClipboard(text, button) {
+    if (!navigator.clipboard || !navigator.clipboard.writeText) {
+        button.textContent = "Copy not available";
+        return;
+    }
 
-    dnaResult.className = "tool-result";
-    dnaResult.innerHTML = `
-        <div class="educational-alert">
-            <strong>We could not analyze this sequence.</strong>
-            <p class="mb-0">${escapeHTML(message)}${fastaMessage}</p>
-        </div>
-    `;
+    navigator.clipboard.writeText(text)
+        .then(function () {
+            const originalText = button.textContent;
+            button.textContent = "Copied";
 
-    sequenceContext.classList.remove("d-none");
-    sequenceContext.innerHTML = `
-        <h4>Need help with sequence format?</h4>
-        <p>Check the sequence formatting first. A valid DNA sequence for this tool should contain only supported nucleotide letters after any FASTA header.</p>
-        <div class="context-actions">
-            <a class="context-link" href="https://www.ncbi.nlm.nih.gov/genbank/fastaformat" target="_blank" rel="noopener noreferrer">📘 Learn about FASTA format ↗</a>
-        </div>
-    `;
+            window.setTimeout(function () {
+                button.textContent = originalText;
+            }, 1400);
+        })
+        .catch(function () {
+            button.textContent = "Copy failed";
+        });
 }
-
-
-// ============================================================
-// DNA Sequence Analyzer
-// ============================================================
-
-const dnaForm = document.querySelector("#dnaForm");
-const dnaInput = document.querySelector("#dnaInput");
-const dnaResult = document.querySelector("#dnaResult");
-const dnaReset = document.querySelector("#dnaReset");
-const sequenceContext = document.querySelector("#sequenceContext");
 
 dnaForm.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -1300,321 +2153,630 @@ dnaForm.addEventListener("submit", function (event) {
     const cleaned = cleanSequenceInput(dnaInput.value, true);
 
     if (cleaned.error) {
-        showSequenceError(cleaned.error, Boolean(cleaned.fastaHeader));
+        dnaResult.className = "tool-result";
+        dnaResult.innerHTML = `
+            <div class="warning-panel">
+                <strong>Your sequence needs attention.</strong>
+                <p>${escapeHTML(cleaned.error)}</p>
+                <p class="mb-0">DNA sequences normally contain A, T, G and C. This beginner tool also allows N for an unspecified nucleotide.</p>
+            </div>
+        `;
+        sequenceNextSteps.classList.add("d-none");
         return;
     }
 
     const counts = countBases(cleaned.sequence);
     const percentages = calculateSequencePercentages(counts);
-    lastReverseComplement = getReverseComplement(cleaned.sequence);
+    const reverseComplement = getReverseComplement(cleaned.sequence);
+
+    lastDnaAnalysis = {
+        cleaned: cleaned.sequence,
+        reverseComplement: reverseComplement
+    };
 
     dnaResult.className = "tool-result";
     dnaResult.innerHTML = `
+        ${cleaned.fastaDetected ? `
+            <div class="info-panel mb-3">
+                <strong>FASTA input detected.</strong>
+                The line beginning with &gt; is a description/header and is not counted as sequence.
+            </div>
+        ` : ""}
+
         <div class="metric-grid">
-            <div class="metric"><span>Length</span><strong>${cleaned.sequence.length} bp</strong></div>
-            <div class="metric"><span>GC content</span><strong>${formatPercentage(percentages.gc)}</strong></div>
+            <div class="metric"><span>Sequence length</span><strong>${cleaned.sequence.length} bp</strong></div>
             <div class="metric"><span>A</span><strong>${counts.A}</strong></div>
             <div class="metric"><span>T</span><strong>${counts.T}</strong></div>
             <div class="metric"><span>G</span><strong>${counts.G}</strong></div>
             <div class="metric"><span>C</span><strong>${counts.C}</strong></div>
             <div class="metric"><span>N</span><strong>${counts.N}</strong></div>
-            <div class="metric"><span>AT content</span><strong>${formatPercentage(percentages.at)}</strong></div>
-            <div class="metric"><span>Called A/T/G/C bases</span><strong>${percentages.calledBases}</strong></div>
+            <div class="metric"><span>GC content</span><strong>${percentages.gc === null ? "N/A" : formatPercentage(percentages.gc)}</strong></div>
+            <div class="metric"><span>AT content</span><strong>${percentages.at === null ? "N/A" : formatPercentage(percentages.at)}</strong></div>
         </div>
-        <p class="form-help">GC and AT percentages are calculated from called A/T/G/C bases. N bases are excluded. If no called bases are present, GC and AT content are shown as N/A.</p>
-        <h4 class="h6 mt-3">Reverse complement</h4>
-        <div class="sequence-output">${lastReverseComplement}</div>
-        <div class="tool-buttons">
-            <button id="copyReverseButton" class="btn secondary-tool-button" type="button">Copy Reverse Complement</button>
-            <span id="copyStatus" class="form-help"></span>
+
+        <p class="result-note">
+            GC% and AT% use only A/T/G/C bases as the denominator; N bases are excluded from those percentages.
+        </p>
+
+        <div class="sequence-result-block">
+            <div class="sequence-result-heading">
+                <h4>Cleaned sequence</h4>
+                <button class="copy-button" type="button" data-copy-source="cleaned">Copy cleaned sequence</button>
+            </div>
+            <pre>${escapeHTML(getSequencePreview(cleaned.sequence))}</pre>
         </div>
-    `;
 
-    const copyReverseButton = document.querySelector("#copyReverseButton");
-    const copyStatus = document.querySelector("#copyStatus");
-
-    copyReverseButton.addEventListener("click", function () {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(lastReverseComplement)
-                .then(function () {
-                    copyStatus.textContent = "Copied.";
-                })
-                .catch(function () {
-                    copyStatus.textContent = "Could not access the clipboard. You can select and copy the sequence manually.";
-                });
-        } else {
-            copyStatus.textContent = "Clipboard access is not available in this browser. You can select and copy the sequence manually.";
-        }
-    });
-
-    sequenceContext.classList.remove("d-none");
-    sequenceContext.innerHTML = `
-        <h4>Your sequence looks valid. What would you like to do next?</h4>
-        ${cleaned.fastaHeader ? `<p><strong>FASTA detected:</strong> ${escapeHTML(cleaned.fastaHeader)} is the definition line. It identifies the sequence and is not counted as DNA.</p>` : ""}
-        <div class="context-actions">
-            <a class="context-link" href="https://blast.ncbi.nlm.nih.gov/Blast.cgi" target="_blank" rel="noopener noreferrer">Find similar sequences → NCBI BLAST</a>
-            <a class="context-link" href="https://www.ncbi.nlm.nih.gov/nucleotide/" target="_blank" rel="noopener noreferrer">Search nucleotide records → NCBI</a>
-            <a class="context-link" href="https://www.ebi.ac.uk/jdispatcher/" target="_blank" rel="noopener noreferrer">Explore sequence tools → EMBL-EBI</a>
+        <div class="sequence-result-block">
+            <div class="sequence-result-heading">
+                <h4>Reverse complement</h4>
+                <button class="copy-button" type="button" data-copy-source="reverse">Copy reverse complement</button>
+            </div>
+            <pre>${escapeHTML(getSequencePreview(reverseComplement))}</pre>
         </div>
     `;
+
+    sequenceNextSteps.classList.remove("d-none");
+    sequenceNextSteps.innerHTML = `
+        <span class="next-step-label">WHAT SHOULD I DO NEXT?</span>
+        <h4>Choose what you want to learn about this sequence</h4>
+        <div class="next-step-actions">
+            <a href="https://blast.ncbi.nlm.nih.gov/Blast.cgi" target="_blank" rel="noopener noreferrer">Identify / compare → NCBI BLAST ↗</a>
+            <button type="button" data-next-search="gene genomic location">Find genomic context</button>
+            <button type="button" data-next-scroll="primer-tool">Design/check primers</button>
+            <button type="button" data-next-scroll="restriction-tool">Find restriction sites</button>
+        </div>
+        <p class="result-note">Do not assume every DNA sequence is protein-coding. If coding potential matters, use appropriate annotation/context resources.</p>
+    `;
+});
+
+dnaResult.addEventListener("click", function (event) {
+    const copyButton = event.target.closest("[data-copy-source]");
+
+    if (!copyButton || !lastDnaAnalysis) {
+        return;
+    }
+
+    const text =
+        copyButton.dataset.copySource === "reverse"
+            ? lastDnaAnalysis.reverseComplement
+            : lastDnaAnalysis.cleaned;
+
+    copyTextToClipboard(text, copyButton);
+});
+
+sequenceNextSteps.addEventListener("click", function (event) {
+    const scrollButton = event.target.closest("[data-next-scroll]");
+    const searchButton = event.target.closest("[data-next-search]");
+
+    if (scrollButton) {
+        scrollToSection(scrollButton.dataset.nextScroll);
+    }
+
+    if (searchButton) {
+        performResourceSearch(searchButton.dataset.nextSearch);
+        scrollToSection("resource-finder");
+    }
 });
 
 dnaReset.addEventListener("click", function () {
     dnaForm.reset();
-    lastReverseComplement = "";
-    dnaResult.className = "tool-result empty-result";
-    dnaResult.innerHTML = "<p>Enter a sequence to see length, nucleotide counts, GC/AT content, and reverse complement.</p>";
-    sequenceContext.classList.add("d-none");
-    sequenceContext.innerHTML = "";
+    lastDnaAnalysis = null;
+    setEmptyResult(
+        dnaResult,
+        "Your cleaned sequence, composition, GC/AT percentages, and reverse complement will appear here."
+    );
+    sequenceNextSteps.classList.add("d-none");
+    sequenceNextSteps.innerHTML = "";
 });
 
 
-// ============================================================
-// Primer Quick Check
-// ============================================================
+// =====================================
+// Primer Analyzer
+// =====================================
 
 const primerForm = document.querySelector("#primerForm");
-const primerInput = document.querySelector("#primerInput");
-const primerResult = document.querySelector("#primerResult");
+const forwardPrimerInput = document.querySelector("#forwardPrimerInput");
+const reversePrimerInput = document.querySelector("#reversePrimerInput");
 const primerReset = document.querySelector("#primerReset");
-const primerContext = document.querySelector("#primerContext");
+const primerResult = document.querySelector("#primerResult");
+const primerNextSteps = document.querySelector("#primerNextSteps");
 
 function calculateWallaceTm(counts) {
     return 2 * (counts.A + counts.T) + 4 * (counts.G + counts.C);
 }
 
-primerForm.addEventListener("submit", function (event) {
-    event.preventDefault();
-
-    const cleaned = cleanSequenceInput(primerInput.value, false);
-
-    if (cleaned.error) {
-        primerResult.className = "tool-result";
-        primerResult.innerHTML = `<div class="educational-alert"><strong>Primer input needs attention.</strong><p class="mb-0">${escapeHTML(cleaned.error)}</p></div>`;
-        primerContext.classList.remove("d-none");
-        primerContext.innerHTML = `
-            <h4>Need help with primer input?</h4>
-            <div class="context-actions">
-                <a class="context-link" href="https://www.ncbi.nlm.nih.gov/guide/howto/design-pcr-primers" target="_blank" rel="noopener noreferrer">📘 Learn about primer design ↗</a>
-            </div>
-        `;
-        return;
-    }
-
-    const counts = countBases(cleaned.sequence);
-    const percentages = calculateSequencePercentages(counts);
+function analyzePrimer(sequence) {
+    const counts = countBases(sequence);
+    const length = sequence.length;
+    const gc = length > 0 ? ((counts.G + counts.C) / length) * 100 : null;
     const tm = calculateWallaceTm(counts);
     const warnings = [];
 
-    if (cleaned.sequence.length < 18) {
-        warnings.push("This primer is relatively short for many common PCR-design workflows. Treat this as a prompt to review the design, not as a failure diagnosis.");
+    if (length < 18) {
+        warnings.push("This primer is relatively short. Short primers may require closer specificity evaluation.");
     }
 
-    if (cleaned.sequence.length > 30) {
-        warnings.push("This primer is relatively long for many routine PCR primers. Longer oligos can be appropriate, but design context matters.");
+    if (length > 30) {
+        warnings.push("This primer is relatively long. Consider reviewing the design with a dedicated primer-design tool.");
     }
 
-    if (percentages.gc < 40) {
-        warnings.push("GC content is relatively low. Review primer-design guidance and the intended target before using the primer experimentally.");
+    if (gc !== null && gc < 40) {
+        warnings.push("GC content is relatively low. This is not proof that the primer will fail, but it is worth closer evaluation.");
     }
 
-    if (percentages.gc > 60) {
-        warnings.push("GC content is relatively high. High-GC primers can require additional optimization depending on sequence and PCR conditions.");
+    if (gc !== null && gc > 60) {
+        warnings.push("GC content is relatively high. This may require closer evaluation depending on sequence and PCR conditions.");
+    }
+
+    return {
+        sequence: sequence,
+        counts: counts,
+        length: length,
+        gc: gc,
+        tm: tm,
+        warnings: warnings
+    };
+}
+
+function renderPrimerSummary(label, analysis) {
+    const warningHTML = analysis.warnings.length
+        ? `
+            <div class="warning-panel mt-3">
+                <strong>Points to review</strong>
+                <ul>${analysis.warnings.map(function (warning) {
+                    return "<li>" + escapeHTML(warning) + "</li>";
+                }).join("")}</ul>
+            </div>
+        `
+        : "";
+
+    return `
+        <article class="primer-summary">
+            <h4>${escapeHTML(label)}</h4>
+            <div class="metric-grid">
+                <div class="metric"><span>Length</span><strong>${analysis.length} nt</strong></div>
+                <div class="metric"><span>GC content</span><strong>${formatPercentage(analysis.gc)}</strong></div>
+                <div class="metric"><span>Approximate Tm</span><strong>${formatNumber(analysis.tm, 1)} °C</strong></div>
+                <div class="metric"><span>A / T / G / C</span><strong>${analysis.counts.A} / ${analysis.counts.T} / ${analysis.counts.G} / ${analysis.counts.C}</strong></div>
+            </div>
+            ${warningHTML}
+        </article>
+    `;
+}
+
+primerForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const forward = cleanSequenceInput(forwardPrimerInput.value, false);
+
+    if (forward.error) {
+        primerResult.className = "tool-result";
+        primerResult.innerHTML = `
+            <div class="warning-panel">
+                <strong>Forward primer needs attention.</strong>
+                <p class="mb-0">${escapeHTML(forward.error)}</p>
+            </div>
+        `;
+        primerNextSteps.classList.add("d-none");
+        return;
+    }
+
+    let reverse = null;
+
+    if (reversePrimerInput.value.trim() !== "") {
+        reverse = cleanSequenceInput(reversePrimerInput.value, false);
+
+        if (reverse.error) {
+            primerResult.className = "tool-result";
+            primerResult.innerHTML = `
+                <div class="warning-panel">
+                    <strong>Reverse primer needs attention.</strong>
+                    <p class="mb-0">${escapeHTML(reverse.error)}</p>
+                </div>
+            `;
+            primerNextSteps.classList.add("d-none");
+            return;
+        }
+    }
+
+    const forwardAnalysis = analyzePrimer(forward.sequence);
+    const reverseAnalysis = reverse ? analyzePrimer(reverse.sequence) : null;
+
+    let pairHTML = "";
+
+    if (reverseAnalysis) {
+        const tmDifference = Math.abs(forwardAnalysis.tm - reverseAnalysis.tm);
+
+        pairHTML = `
+            <div class="pair-comparison">
+                <h4>Primer-pair comparison</h4>
+                <p>Approximate Tm difference: <strong>${formatNumber(tmDifference, 1)} °C</strong></p>
+                <p class="mb-0">
+                    ${tmDifference <= 5
+                        ? "The simple Wallace estimates are fairly close, but similar approximate Tm values alone do not validate a primer pair."
+                        : "The simple Wallace estimates differ by more than 5 °C. This is a reason to review the pair with a dedicated primer-design tool, not a definitive failure diagnosis."}
+                </p>
+            </div>
+        `;
     }
 
     primerResult.className = "tool-result";
     primerResult.innerHTML = `
-        <div class="metric-grid">
-            <div class="metric"><span>Length</span><strong>${cleaned.sequence.length} nt</strong></div>
-            <div class="metric"><span>GC content</span><strong>${formatPercentage(percentages.gc)}</strong></div>
-            <div class="metric"><span>Approximate Tm</span><strong>${tm} °C</strong></div>
-            <div class="metric"><span>A / T / G / C</span><strong>${counts.A} / ${counts.T} / ${counts.G} / ${counts.C}</strong></div>
+        <div class="primer-result-grid">
+            ${renderPrimerSummary("Forward primer", forwardAnalysis)}
+            ${reverseAnalysis ? renderPrimerSummary("Reverse primer", reverseAnalysis) : ""}
         </div>
-        <p class="form-help"><strong>Approximate Tm:</strong> Wallace rule, Tm ≈ 2 × (A + T) + 4 × (G + C). This is a quick educational estimate and does not model salt, Mg²⁺, oligo concentration, mismatches, or secondary structure.</p>
-        ${warnings.length ? `<div class="educational-alert mt-3"><strong>Things to review</strong><ul class="mb-0 mt-2">${warnings.map(function (warning) { return `<li>${warning}</li>`; }).join("")}</ul></div>` : `<div class="alert alert-success mt-3 mb-0">No simple length or GC-content warning was triggered. This does not prove that the primer is specific or experimentally suitable.</div>`}
+
+        ${pairHTML}
+
+        <div class="info-panel mt-3">
+            <strong>Approximate Tm using a simple rule</strong>
+            <p class="mb-0">
+                Wallace estimate: Tm ≈ 2 × (A + T) + 4 × (G + C).
+                It does not model salt, Mg²⁺, oligo concentration, mismatches, or complete thermodynamic behavior.
+            </p>
+        </div>
     `;
 
-    primerContext.classList.remove("d-none");
-    primerContext.innerHTML = `
-        <h4>Next steps</h4>
-        <p>A local length/GC/Tm check cannot evaluate primer specificity, target uniqueness, hairpins, or primer dimers completely.</p>
-        <div class="context-actions">
-            <a class="context-link" href="https://www.ncbi.nlm.nih.gov/tools/primer-blast/" target="_blank" rel="noopener noreferrer">Check specificity → Primer-BLAST</a>
-            <a class="context-link" href="https://www.idtdna.com/pages/tools/oligoanalyzer" target="_blank" rel="noopener noreferrer">Analyze hairpins &amp; dimers → OligoAnalyzer</a>
-            <a class="context-link" href="https://www.neb.com/en-gb/tools-and-resources/troubleshooting-guides/pcr-troubleshooting-guide" target="_blank" rel="noopener noreferrer">Learn about PCR optimization ↗</a>
+    primerNextSteps.classList.remove("d-none");
+    primerNextSteps.innerHTML = `
+        <span class="next-step-label">NEXT STEPS</span>
+        <div class="next-step-actions">
+            <a href="https://www.ncbi.nlm.nih.gov/tools/primer-blast/" target="_blank" rel="noopener noreferrer">Check specificity → Primer-BLAST ↗</a>
+            <a href="https://www.idtdna.com/pages/tools/oligoanalyzer" target="_blank" rel="noopener noreferrer">Check hairpins &amp; dimers → OligoAnalyzer ↗</a>
+            <button type="button" data-next-scroll="pcr-tool">Prepare reaction</button>
+            <button type="button" data-next-scroll="pcr-troubleshooting-tool">Troubleshoot PCR</button>
         </div>
     `;
+});
+
+primerNextSteps.addEventListener("click", function (event) {
+    const scrollButton = event.target.closest("[data-next-scroll]");
+
+    if (scrollButton) {
+        scrollToSection(scrollButton.dataset.nextScroll);
+    }
 });
 
 primerReset.addEventListener("click", function () {
     primerForm.reset();
-    primerResult.className = "tool-result empty-result";
-    primerResult.innerHTML = "<p>Enter a primer to see basic composition and an approximate Tm.</p>";
-    primerContext.classList.add("d-none");
-    primerContext.innerHTML = "";
+    setEmptyResult(
+        primerResult,
+        "Enter a forward primer, and optionally a reverse primer, to see quick composition and approximate Tm results."
+    );
+    primerNextSteps.classList.add("d-none");
+    primerNextSteps.innerHTML = "";
 });
 
 
-// ============================================================
+// =====================================
 // PCR Calculator
-// ============================================================
+// =====================================
 
 const pcrForm = document.querySelector("#pcrForm");
 const pcrReactions = document.querySelector("#pcrReactions");
-const pcrExtra = document.querySelector("#pcrExtra");
-const pcrVolumes = document.querySelectorAll(".pcr-volume");
-const pcrResult = document.querySelector("#pcrResult");
+const pcrExtraPercent = document.querySelector("#pcrExtraPercent");
+const pcrExtraReactions = document.querySelector("#pcrExtraReactions");
+const pcrReactionVolume = document.querySelector("#pcrReactionVolume");
+const pcrReagentRows = document.querySelector("#pcrReagentRows");
 const pcrReset = document.querySelector("#pcrReset");
-const pcrContext = document.querySelector("#pcrContext");
+const pcrResult = document.querySelector("#pcrResult");
 
-const pcrExampleValues = [12.5, 0.5, 0.5, 1, 10.5];
-
-function getPositiveNumber(inputElement, allowZero) {
+function readNumber(inputElement, allowZero) {
     const value = Number(inputElement.value);
 
-    if (!Number.isFinite(value)) return null;
-    if (allowZero && value >= 0) return value;
-    if (!allowZero && value > 0) return value;
-    return null;
+    if (!Number.isFinite(value)) {
+        return null;
+    }
+
+    if (allowZero ? value < 0 : value <= 0) {
+        return null;
+    }
+
+    return value;
+}
+
+function getPcrReagents() {
+    const rows = Array.from(pcrReagentRows.querySelectorAll("[data-reagent-row]"));
+    const reagents = [];
+    const errors = [];
+
+    rows.forEach(function (row, index) {
+        const nameInput = row.querySelector(".reagent-name");
+        const volumeInput = row.querySelector(".reagent-volume");
+        const pooledInput = row.querySelector(".reagent-pooled");
+
+        const name = nameInput.value.trim();
+        const rawVolume = volumeInput.value.trim();
+
+        if (!name && rawVolume === "") {
+            return;
+        }
+
+        if (!name) {
+            errors.push("Please name reagent row " + (index + 1) + ".");
+            return;
+        }
+
+        if (rawVolume === "") {
+            errors.push("Please enter a per-reaction volume for " + name + ".");
+            return;
+        }
+
+        const volume = Number(rawVolume);
+
+        if (!Number.isFinite(volume) || volume < 0) {
+            errors.push("Volume for " + name + " must be zero or a positive number.");
+            return;
+        }
+
+        reagents.push({
+            name: name,
+            volume: volume,
+            pooled: pooledInput.checked
+        });
+    });
+
+    return {
+        reagents: reagents,
+        errors: errors
+    };
 }
 
 pcrForm.addEventListener("submit", function (event) {
     event.preventDefault();
 
-    const reactions = getPositiveNumber(pcrReactions, false);
-    const extraPercent = getPositiveNumber(pcrExtra, true);
+    const reactions = Number(pcrReactions.value);
+    const extraPercent = Number(pcrExtraPercent.value);
+    const extraReactions = Number(pcrExtraReactions.value);
+    const reactionVolume = Number(pcrReactionVolume.value);
 
-    if (reactions === null || extraPercent === null) {
+    if (!Number.isInteger(reactions) || reactions <= 0) {
         pcrResult.className = "tool-result";
-        pcrResult.innerHTML = `<div class="educational-alert"><strong>Please check the inputs.</strong><p class="mb-0">Enter a positive whole number of reactions and an extra percentage of zero or greater.</p></div>`;
+        pcrResult.innerHTML = `
+            <div class="warning-panel">
+                <strong>Number of reactions must be a positive whole number.</strong>
+                <p class="mb-0">For example: 8, not 8.5.</p>
+            </div>
+        `;
         return;
     }
 
-    if (!Number.isInteger(reactions)) {
-        pcrResult.className = "tool-result";
-        pcrResult.innerHTML = `<div class="educational-alert"><strong>Number of reactions must be a whole number.</strong><p class="mb-0">For example, use 8 reactions rather than 8.5.</p></div>`;
+    if (!Number.isFinite(extraPercent) || extraPercent < 0) {
+        pcrResult.innerHTML = '<div class="warning-panel"><strong>Extra percentage must be zero or a positive number.</strong></div>';
         return;
     }
 
-    const reagentRows = [];
-    let hasInvalidVolume = false;
-
-    pcrVolumes.forEach(function (input) {
-        const volume = getPositiveNumber(input, true);
-
-        if (volume === null) {
-            hasInvalidVolume = true;
-            return;
-        }
-
-        reagentRows.push({
-            reagent: input.dataset.reagent,
-            perReaction: volume
-        });
-    });
-
-    if (hasInvalidVolume) {
-        pcrResult.className = "tool-result";
-        pcrResult.innerHTML = `<div class="educational-alert"><strong>Please check reagent volumes.</strong><p class="mb-0">Use numeric volumes of zero or greater for every reagent row.</p></div>`;
+    if (!Number.isInteger(extraReactions) || extraReactions < 0) {
+        pcrResult.innerHTML = '<div class="warning-panel"><strong>Extra reactions must be a whole number of zero or more.</strong></div>';
         return;
     }
 
-    const adjustedReactions = reactions * (1 + extraPercent / 100);
-    const perReactionTotal = reagentRows.reduce(function (total, row) {
-        return total + row.perReaction;
+    if (!Number.isFinite(reactionVolume) || reactionVolume <= 0) {
+        pcrResult.innerHTML = '<div class="warning-panel"><strong>Reaction volume must be a positive number.</strong></div>';
+        return;
+    }
+
+    const reagentData = getPcrReagents();
+
+    if (reagentData.errors.length > 0) {
+        pcrResult.innerHTML = `
+            <div class="warning-panel">
+                <strong>Please review the reagent table.</strong>
+                <ul>${reagentData.errors.map(function (message) {
+                    return "<li>" + escapeHTML(message) + "</li>";
+                }).join("")}</ul>
+            </div>
+        `;
+        return;
+    }
+
+    if (reagentData.reagents.length === 0) {
+        pcrResult.innerHTML = '<div class="warning-panel"><strong>Enter at least one reagent row.</strong></div>';
+        return;
+    }
+
+    const perReactionTotal = reagentData.reagents.reduce(function (sum, reagent) {
+        return sum + reagent.volume;
     }, 0);
 
-    const resultRows = reagentRows.map(function (row) {
-        return `
-            <tr>
-                <td>${row.reagent}</td>
-                <td>${formatNumber(row.perReaction, 2)} µL</td>
-                <td>${formatNumber(row.perReaction * adjustedReactions, 2)} µL</td>
-            </tr>
+    if (perReactionTotal > reactionVolume + 0.000001) {
+        pcrResult.innerHTML = `
+            <div class="warning-panel">
+                <strong>Reagent volumes exceed the stated reaction volume.</strong>
+                <p class="mb-0">
+                    Entered reagent total: ${formatNumber(perReactionTotal, 3)} µL.
+                    Stated reaction volume: ${formatNumber(reactionVolume, 3)} µL.
+                </p>
+            </div>
         `;
-    }).join("");
+        return;
+    }
+
+    const adjustedReactions =
+        reactions * (1 + extraPercent / 100) + extraReactions;
+
+    const rowsHTML = reagentData.reagents
+        .map(function (reagent) {
+            const total = reagent.volume * adjustedReactions;
+            return `
+                <tr>
+                    <td>${escapeHTML(reagent.name)}</td>
+                    <td>${formatNumber(reagent.volume, 3)} µL</td>
+                    <td>${formatNumber(adjustedReactions, 2)}</td>
+                    <td>${formatNumber(total, 3)} µL</td>
+                    <td>${reagent.pooled ? "Yes" : "No — add separately"}</td>
+                </tr>
+            `;
+        })
+        .join("");
+
+    const pooledPerReaction = reagentData.reagents
+        .filter(function (reagent) {
+            return reagent.pooled;
+        })
+        .reduce(function (sum, reagent) {
+            return sum + reagent.volume;
+        }, 0);
+
+    const pooledTotal = pooledPerReaction * adjustedReactions;
+    const unallocated = reactionVolume - perReactionTotal;
 
     pcrResult.className = "tool-result";
     pcrResult.innerHTML = `
         <div class="metric-grid">
-            <div class="metric"><span>Reactions entered</span><strong>${reactions}</strong></div>
-            <div class="metric"><span>Adjusted reaction equivalent</span><strong>${formatNumber(adjustedReactions, 2)}</strong></div>
-            <div class="metric"><span>Per-reaction total</span><strong>${formatNumber(perReactionTotal, 2)} µL</strong></div>
-            <div class="metric"><span>Extra allowance</span><strong>${formatNumber(extraPercent, 1)}%</strong></div>
+            <div class="metric"><span>Requested reactions</span><strong>${reactions}</strong></div>
+            <div class="metric"><span>Adjusted reaction factor</span><strong>${formatNumber(adjustedReactions, 2)}</strong></div>
+            <div class="metric"><span>Reaction volume</span><strong>${formatNumber(reactionVolume, 3)} µL</strong></div>
+            <div class="metric"><span>Entered reagent total / reaction</span><strong>${formatNumber(perReactionTotal, 3)} µL</strong></div>
+            <div class="metric"><span>Pooled master-mix volume / reaction</span><strong>${formatNumber(pooledPerReaction, 3)} µL</strong></div>
+            <div class="metric"><span>Total pooled master mix</span><strong>${formatNumber(pooledTotal, 3)} µL</strong></div>
         </div>
-        <div class="table-responsive">
+
+        ${unallocated > 0.000001 ? `
+            <div class="info-panel mt-3">
+                <strong>${formatNumber(unallocated, 3)} µL per reaction is not assigned to a reagent row.</strong>
+                This may be intentional, but compare the table with your protocol.
+            </div>
+        ` : ""}
+
+        <div class="table-responsive mt-3">
             <table class="table result-table">
-                <thead><tr><th>Component</th><th>Per reaction</th><th>Total</th></tr></thead>
-                <tbody>${resultRows}</tbody>
+                <thead>
+                    <tr>
+                        <th>Reagent</th>
+                        <th>Per reaction</th>
+                        <th>Adjusted reactions</th>
+                        <th>Total needed</th>
+                        <th>In pooled master mix?</th>
+                    </tr>
+                </thead>
+                <tbody>${rowsHTML}</tbody>
             </table>
         </div>
-        <p class="form-help mt-2">Total volume needed = volume per reaction × adjusted reaction equivalent.</p>
-    `;
 
-    pcrContext.classList.remove("d-none");
-    pcrContext.innerHTML = `
-        <h4>PCR setup reminder</h4>
-        <p>This calculator only scales the volumes you entered. If a PCR does not amplify as expected, researchers commonly investigate areas such as template quality, primer design, annealing conditions, and polymerase/reaction conditions. This app cannot diagnose the cause from volume information alone.</p>
-        <div class="context-actions">
-            <a class="context-link" href="https://www.addgene.org/protocols/pcr/" target="_blank" rel="noopener noreferrer">Read a PCR protocol ↗</a>
-            <a class="context-link" href="https://www.neb.com/en-gb/tools-and-resources/troubleshooting-guides/pcr-troubleshooting-guide" target="_blank" rel="noopener noreferrer">Open PCR Troubleshooting Guide ↗</a>
+        <div class="info-panel mt-3">
+            <strong>Important distinction</strong>
+            <p class="mb-0">
+                The reaction calculator scales every entered component.
+                The pooled master-mix total includes only rows you marked for pooling.
+                Template DNA or condition-specific reagents may need to be added separately depending on your experiment.
+            </p>
         </div>
     `;
 });
 
 pcrReset.addEventListener("click", function () {
-    pcrReactions.value = 8;
-    pcrExtra.value = 10;
-    pcrVolumes.forEach(function (input, index) {
-        input.value = pcrExampleValues[index];
-    });
-    pcrResult.className = "tool-result empty-result mt-4";
-    pcrResult.innerHTML = "<p>Adjust the example values to match your protocol, then calculate the total volume required.</p>";
-    pcrContext.classList.add("d-none");
-    pcrContext.innerHTML = "";
+    pcrForm.reset();
+    setEmptyResult(
+        pcrResult,
+        "Enter reaction settings and reagent volumes from your protocol to calculate scaled totals."
+    );
 });
 
 
-// ============================================================
+// =====================================
+// PCR Troubleshooting
+// =====================================
+
+const pcrTroubleshootForm = document.querySelector("#pcrTroubleshootForm");
+const pcrProblemSelect = document.querySelector("#pcrProblemSelect");
+const pcrTroubleshootReset = document.querySelector("#pcrTroubleshootReset");
+const pcrTroubleshootResult = document.querySelector("#pcrTroubleshootResult");
+
+pcrTroubleshootForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const guidance = pcrTroubleshooting[pcrProblemSelect.value];
+
+    if (!guidance) {
+        pcrTroubleshootResult.innerHTML = `
+            <div class="warning-panel">
+                <strong>Choose an observed PCR problem first.</strong>
+            </div>
+        `;
+        return;
+    }
+
+    pcrTroubleshootResult.className = "tool-result";
+    pcrTroubleshootResult.innerHTML = `
+        <div class="troubleshooting-result">
+            <span class="warning-label">AREAS TO INVESTIGATE</span>
+            <h4>${escapeHTML(guidance.title)}</h4>
+            <p>${escapeHTML(guidance.explanation)}</p>
+
+            <ul>
+                ${guidance.checks.map(function (check) {
+                    return "<li>" + escapeHTML(check) + "</li>";
+                }).join("")}
+            </ul>
+
+            <p><strong>Possible factors to investigate include the items above.</strong> This list is not a diagnosis.</p>
+
+            <div class="next-step-actions">
+                ${guidance.links.map(function (link) {
+                    return createExternalLink(link[0], link[1], "external-action");
+                }).join("")}
+            </div>
+        </div>
+    `;
+});
+
+pcrTroubleshootReset.addEventListener("click", function () {
+    pcrTroubleshootForm.reset();
+    setEmptyResult(
+        pcrTroubleshootResult,
+        "Choose an observed problem to see cautious troubleshooting categories and official guidance."
+    );
+});
+
+
+// =====================================
 // Dilution Calculator
-// ============================================================
+// =====================================
 
 const dilutionForm = document.querySelector("#dilutionForm");
 const stockConcentration = document.querySelector("#stockConcentration");
 const desiredConcentration = document.querySelector("#desiredConcentration");
 const finalVolume = document.querySelector("#finalVolume");
 const volumeUnit = document.querySelector("#volumeUnit");
-const dilutionResult = document.querySelector("#dilutionResult");
 const dilutionReset = document.querySelector("#dilutionReset");
-const dilutionContext = document.querySelector("#dilutionContext");
+const dilutionResult = document.querySelector("#dilutionResult");
 
 dilutionForm.addEventListener("submit", function (event) {
     event.preventDefault();
 
-    const c1 = getPositiveNumber(stockConcentration, false);
-    const c2 = getPositiveNumber(desiredConcentration, false);
-    const v2 = getPositiveNumber(finalVolume, false);
+    const c1 = Number(stockConcentration.value);
+    const c2 = Number(desiredConcentration.value);
+    const v2 = Number(finalVolume.value);
     const unit = volumeUnit.value;
 
-    if (c1 === null || c2 === null || v2 === null) {
-        dilutionResult.className = "tool-result";
-        dilutionResult.innerHTML = `<div class="educational-alert"><strong>Please enter positive numbers.</strong><p class="mb-0">C1, C2, and V2 must all be greater than zero.</p></div>`;
+    if (
+        !Number.isFinite(c1) ||
+        !Number.isFinite(c2) ||
+        !Number.isFinite(v2) ||
+        c1 <= 0 ||
+        c2 <= 0 ||
+        v2 <= 0
+    ) {
+        dilutionResult.innerHTML = `
+            <div class="warning-panel">
+                <strong>Please enter positive values for C1, C2, and V2.</strong>
+                <p class="mb-0">Zero, negative, missing, NaN, and infinite values are not valid for this calculation.</p>
+            </div>
+        `;
         return;
     }
 
     if (c2 > c1) {
-        dilutionResult.className = "tool-result";
         dilutionResult.innerHTML = `
-            <div class="educational-alert">
-                <strong>The desired concentration is higher than the stock concentration.</strong>
-                <p class="mb-0">A simple dilution can only decrease concentration. To obtain a higher concentration, a different preparation or concentration step would be required.</p>
+            <div class="warning-panel">
+                <strong>A simple dilution cannot increase concentration above the stock concentration.</strong>
+                <p class="mb-0">
+                    C2 is greater than C1. Adding diluent decreases concentration;
+                    obtaining a higher concentration requires a different preparation or concentration step.
+                </p>
             </div>
-        `;
-        dilutionContext.classList.remove("d-none");
-        dilutionContext.innerHTML = `
-            <h4>Why is this input impossible for a simple dilution?</h4>
-            <p>In C1 × V1 = C2 × V2, the stock is the more concentrated starting solution. Adding diluent cannot make it more concentrated.</p>
-            <div class="context-actions"><a class="context-link" href="https://www.idtdna.com/page/support-and-education/decoded-plus/easy-resuspension-and-dilution-of-oligonucleotides" target="_blank" rel="noopener noreferrer">📘 Learn about dilution calculations ↗</a></div>
         `;
         return;
     }
@@ -1625,44 +2787,42 @@ dilutionForm.addEventListener("submit", function (event) {
     dilutionResult.className = "tool-result";
     dilutionResult.innerHTML = `
         <div class="metric-grid">
-            <div class="metric"><span>Required stock volume (V1)</span><strong>${formatNumber(v1, 3)} ${unit}</strong></div>
-            <div class="metric"><span>Diluent volume</span><strong>${formatNumber(diluent, 3)} ${unit}</strong></div>
-            <div class="metric"><span>Final volume (V2)</span><strong>${formatNumber(v2, 3)} ${unit}</strong></div>
-            <div class="metric"><span>Concentration ratio C2/C1</span><strong>${formatNumber(c2 / c1, 3)}</strong></div>
+            <div class="metric"><span>Stock volume needed (V1)</span><strong>${formatNumber(v1, 4)} ${unit}</strong></div>
+            <div class="metric"><span>Diluent volume</span><strong>${formatNumber(diluent, 4)} ${unit}</strong></div>
+            <div class="metric"><span>Final volume (V2)</span><strong>${formatNumber(v2, 4)} ${unit}</strong></div>
         </div>
-        <p class="form-help">V1 = (C2 × V2) / C1. Diluent = V2 − V1.</p>
-    `;
 
-    dilutionContext.classList.remove("d-none");
-    dilutionContext.innerHTML = `
-        <h4>Understanding the result</h4>
-        <p><strong>C1</strong> is the stock concentration, <strong>V1</strong> is the stock volume you need, <strong>C2</strong> is the desired concentration, and <strong>V2</strong> is the final total volume.</p>
-        <div class="context-actions"><a class="context-link" href="https://www.idtdna.com/page/support-and-education/decoded-plus/easy-resuspension-and-dilution-of-oligonucleotides" target="_blank" rel="noopener noreferrer">📘 Learn about dilution calculations ↗</a></div>
+        <div class="formula-panel">
+            <strong>C1 × V1 = C2 × V2</strong>
+            <span>V1 = (C2 × V2) / C1</span>
+        </div>
     `;
 });
 
 dilutionReset.addEventListener("click", function () {
     dilutionForm.reset();
-    dilutionResult.className = "tool-result empty-result mt-4";
-    dilutionResult.innerHTML = "<p>Enter C1, C2, and V2 to calculate the required stock and diluent volumes.</p>";
-    dilutionContext.classList.add("d-none");
-    dilutionContext.innerHTML = "";
+    setEmptyResult(
+        dilutionResult,
+        "Enter C1, C2, and V2 to calculate stock and diluent volumes."
+    );
 });
 
 
-// ============================================================
+// =====================================
 // Restriction Site Finder
-// ============================================================
+// =====================================
 
 const restrictionForm = document.querySelector("#restrictionForm");
 const restrictionInput = document.querySelector("#restrictionInput");
 const enzymeSelect = document.querySelector("#enzymeSelect");
 const enzymeRecognition = document.querySelector("#enzymeRecognition");
-const restrictionResult = document.querySelector("#restrictionResult");
 const restrictionReset = document.querySelector("#restrictionReset");
-const restrictionContext = document.querySelector("#restrictionContext");
+const restrictionResult = document.querySelector("#restrictionResult");
+const restrictionNextSteps = document.querySelector("#restrictionNextSteps");
 
-function populateEnzymeSelect() {
+function populateRestrictionEnzymes() {
+    enzymeSelect.innerHTML = "";
+
     Object.keys(restrictionEnzymes).forEach(function (enzymeName) {
         const option = document.createElement("option");
         option.value = enzymeName;
@@ -1670,12 +2830,12 @@ function populateEnzymeSelect() {
         enzymeSelect.appendChild(option);
     });
 
-    updateRecognitionDisplay();
+    updateRestrictionRecognition();
 }
 
-function updateRecognitionDisplay() {
-    const enzymeName = enzymeSelect.value;
-    enzymeRecognition.textContent = restrictionEnzymes[enzymeName] || "—";
+function updateRestrictionRecognition() {
+    const enzyme = restrictionEnzymes[enzymeSelect.value];
+    enzymeRecognition.textContent = enzyme ? enzyme.recognition : "—";
 }
 
 function findRestrictionPositions(sequence, recognitionSequence) {
@@ -1683,20 +2843,21 @@ function findRestrictionPositions(sequence, recognitionSequence) {
     let searchStart = 0;
 
     while (searchStart <= sequence.length - recognitionSequence.length) {
-        const matchIndex = sequence.indexOf(recognitionSequence, searchStart);
+        const index = sequence.indexOf(recognitionSequence, searchStart);
 
-        if (matchIndex === -1) {
+        if (index === -1) {
             break;
         }
 
-        positions.push(matchIndex + 1);
-        searchStart = matchIndex + 1;
+        // Positions are 1-based recognition-sequence starts, not cleavage sites.
+        positions.push(index + 1);
+        searchStart = index + 1;
     }
 
     return positions;
 }
 
-enzymeSelect.addEventListener("change", updateRecognitionDisplay);
+enzymeSelect.addEventListener("change", updateRestrictionRecognition);
 
 restrictionForm.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -1704,79 +2865,148 @@ restrictionForm.addEventListener("submit", function (event) {
     const cleaned = cleanSequenceInput(restrictionInput.value, true);
 
     if (cleaned.error) {
-        restrictionResult.className = "tool-result";
-        restrictionResult.innerHTML = `<div class="educational-alert"><strong>Sequence input needs attention.</strong><p class="mb-0">${escapeHTML(cleaned.error)}</p></div>`;
+        restrictionResult.innerHTML = `
+            <div class="warning-panel">
+                <strong>Sequence input needs attention.</strong>
+                <p class="mb-0">${escapeHTML(cleaned.error)}</p>
+            </div>
+        `;
+        restrictionNextSteps.classList.add("d-none");
         return;
     }
 
     const enzymeName = enzymeSelect.value;
-    const recognitionSequence = restrictionEnzymes[enzymeName];
-    const positions = findRestrictionPositions(cleaned.sequence, recognitionSequence);
-
-    if (positions.length === 0) {
-        restrictionResult.className = "tool-result";
-        restrictionResult.innerHTML = `
-            <div class="metric-grid">
-                <div class="metric"><span>Enzyme</span><strong>${enzymeName}</strong></div>
-                <div class="metric"><span>Recognition site</span><strong>${recognitionSequence}</strong></div>
-                <div class="metric"><span>Matches</span><strong>0</strong></div>
-                <div class="metric"><span>Sequence length</span><strong>${cleaned.sequence.length} bp</strong></div>
-            </div>
-            <p>No ${recognitionSequence} recognition site was found in the sequence.</p>
-        `;
-
-        restrictionContext.classList.remove("d-none");
-        restrictionContext.innerHTML = `
-            <h4>No restriction site found. What next?</h4>
-            <p>This only means the selected recognition sequence was not found in the entered sequence. It does not select an alternative enzyme for your experiment.</p>
-            <div class="context-actions"><a class="context-link" href="https://enzymefinder.neb.com/" target="_blank" rel="noopener noreferrer">Find another enzyme → NEB Enzyme Finder</a></div>
-        `;
-        return;
-    }
+    const enzyme = restrictionEnzymes[enzymeName];
+    const positions = findRestrictionPositions(cleaned.sequence, enzyme.recognition);
 
     restrictionResult.className = "tool-result";
     restrictionResult.innerHTML = `
         <div class="metric-grid">
-            <div class="metric"><span>Enzyme</span><strong>${enzymeName}</strong></div>
-            <div class="metric"><span>Recognition site</span><strong>${recognitionSequence}</strong></div>
+            <div class="metric"><span>Enzyme</span><strong>${escapeHTML(enzymeName)}</strong></div>
+            <div class="metric"><span>Recognition sequence</span><strong>${enzyme.recognition}</strong></div>
             <div class="metric"><span>Matches</span><strong>${positions.length}</strong></div>
             <div class="metric"><span>Sequence length</span><strong>${cleaned.sequence.length} bp</strong></div>
         </div>
-        <h4 class="h6">Recognition-site start positions (1-based)</h4>
-        <div class="sequence-output">${positions.join(", ")}</div>
-        <p class="form-help mt-2">These are recognition-sequence start positions, not cleavage coordinates. The six built-in recognition sequences are palindromic, so searching this sequence text is sufficient to detect those sites on double-stranded DNA.</p>
+
+        ${positions.length
+            ? `
+                <h4 class="h6 mt-3">Recognition-site start positions (1-based)</h4>
+                <div class="sequence-output">${positions.join(", ")}</div>
+            `
+            : `
+                <div class="info-panel mt-3">
+                    No ${enzyme.recognition} recognition sequence was found.
+                </div>
+            `}
+
+        <p class="result-note">
+            These positions mark the start of the recognition sequence, not the enzyme's cleavage coordinate.
+            A sequence match does not show whether an experimental digest will work.
+        </p>
     `;
 
-    restrictionContext.classList.remove("d-none");
-    restrictionContext.innerHTML = `
-        <h4>Restriction sites found. Before planning an experiment, check:</h4>
-        <ul>
-            <li>enzyme buffer compatibility</li>
-            <li>recommended incubation temperature</li>
-            <li>methylation sensitivity</li>
-            <li>expected fragment sizes and experimental context</li>
-        </ul>
-        <div class="context-actions">
-            <a class="context-link" href="https://enzymefinder.neb.com/" target="_blank" rel="noopener noreferrer">Check enzyme information → NEB</a>
-            <a class="context-link" href="https://www.addgene.org/protocols/restriction-digest/" target="_blank" rel="noopener noreferrer">Read a restriction digest protocol ↗</a>
+    restrictionNextSteps.classList.remove("d-none");
+    restrictionNextSteps.innerHTML = `
+        <span class="next-step-label">BEFORE USING THIS ENZYME EXPERIMENTALLY</span>
+        <p>Check recommended reaction conditions, buffer compatibility, incubation temperature, methylation sensitivity where relevant, star activity guidance, heat inactivation information, and expected fragment sizes.</p>
+        <div class="next-step-actions">
+            <a href="${enzyme.documentation}" target="_blank" rel="noopener noreferrer">Open ${escapeHTML(enzymeName)} documentation ↗</a>
+            <a href="https://enzymefinder.neb.com/" target="_blank" rel="noopener noreferrer">Open NEB Enzyme Finder ↗</a>
         </div>
     `;
 });
 
 restrictionReset.addEventListener("click", function () {
     restrictionForm.reset();
-    updateRecognitionDisplay();
-    restrictionResult.className = "tool-result empty-result";
-    restrictionResult.innerHTML = "<p>Select an enzyme and enter a DNA sequence to find matching recognition sites.</p>";
-    restrictionContext.classList.add("d-none");
-    restrictionContext.innerHTML = "";
+    updateRestrictionRecognition();
+    setEmptyResult(
+        restrictionResult,
+        "Choose an enzyme and analyze a DNA sequence to see recognition-site start positions."
+    );
+    restrictionNextSteps.classList.add("d-none");
+    restrictionNextSteps.innerHTML = "";
 });
 
-populateEnzymeSelect();
+
+// =====================================
+// Problem Navigator
+// =====================================
+
+const problemSelect = document.querySelector("#problemSelect");
+const problemGuideButton = document.querySelector("#problemGuideButton");
+const problemResult = document.querySelector("#problemResult");
+
+problemGuideButton.addEventListener("click", function () {
+    const guide = problemGuides[problemSelect.value];
+
+    if (!guide) {
+        problemResult.className = "problem-result";
+        problemResult.innerHTML = `
+            <div class="warning-panel">
+                <strong>Choose a problem first.</strong>
+                <p class="mb-0">The navigator needs an observation or goal before it can suggest a path.</p>
+            </div>
+        `;
+        return;
+    }
+
+    let internalAction = "";
+
+    if (guide.internalTarget) {
+        internalAction = '<button type="button" class="workflow-action" data-problem-scroll="' + escapeHTML(guide.internalTarget) + '">Open relevant app section</button>';
+    } else if (guide.workflow) {
+        internalAction = '<button type="button" class="workflow-action" data-problem-workflow="' + escapeHTML(guide.workflow) + '">Open guided workflow</button>';
+    } else if (guide.searchQuery) {
+        internalAction = '<button type="button" class="workflow-action" data-problem-search="' + escapeHTML(guide.searchQuery) + '">Find relevant resources</button>';
+    }
+
+    const professionalAction = guide.professionalUrl
+        ? createExternalLink(guide.professionalTitle, guide.professionalUrl, "workflow-action workflow-action-external")
+        : "";
+
+    problemResult.className = "problem-result";
+    problemResult.innerHTML = `
+        <span class="warning-label">GUIDED TROUBLESHOOTING</span>
+        <h3>${escapeHTML(guide.title)}</h3>
+        <p>${escapeHTML(guide.text)}</p>
+        <div class="workflow-actions">
+            ${internalAction}
+            ${professionalAction}
+        </div>
+        <p class="result-note">This navigator organizes sensible next checks; it is not an AI diagnostic system.</p>
+    `;
+});
+
+problemResult.addEventListener("click", function (event) {
+    const scrollButton = event.target.closest("[data-problem-scroll]");
+    const workflowButton = event.target.closest("[data-problem-workflow]");
+    const searchButton = event.target.closest("[data-problem-search]");
+
+    if (scrollButton) {
+        scrollToSection(scrollButton.dataset.problemScroll);
+    }
+
+    if (workflowButton) {
+        renderWorkflow(workflowButton.dataset.problemWorkflow);
+    }
+
+    if (searchButton) {
+        performResourceSearch(searchButton.dataset.problemSearch);
+        scrollToSection("resource-finder");
+    }
+});
 
 
-// ============================================================
-// Footer Year
-// ============================================================
+// =====================================
+// Initialize Contextual Help and UI
+// =====================================
+
+renderHelpResources("sequence", "#sequenceHelp", "Need help understanding sequences?");
+renderHelpResources("primer", "#primerHelp", "Need help with primer design?");
+renderHelpResources("pcr", "#pcrHelp", "PCR Help Center");
+renderHelpResources("dilution", "#dilutionHelp", "Understanding dilutions");
+renderHelpResources("restriction", "#restrictionHelp", "Need help with restriction enzymes?");
+
+populateRestrictionEnzymes();
 
 currentYear.textContent = new Date().getFullYear();

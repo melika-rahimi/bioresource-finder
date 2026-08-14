@@ -3,111 +3,717 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="BioResource Finder is a beginner-friendly biology research toolkit for finding trusted biological resources and performing simple sequence and laboratory calculations.">
-    <title>BioResource Finder | Biology Research Toolkit</title>
+    <meta
+        name="description"
+        content="BioResource Finder is a beginner-friendly scientific workflow navigator, biological resource finder, and collection of simple biology utilities."
+    >
+    <title>BioResource Finder | Scientific Workflow Navigator</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <!-- ========================= Navbar ========================= -->
+    <!-- =========================
+         Navbar
+    ========================== -->
     <header>
         <nav class="navbar navbar-expand-lg site-navbar sticky-top">
             <div class="container">
-                <a class="navbar-brand" href="#search">
-                    <span class="brand-symbol" aria-hidden="true">⌬</span>
-                    <span>BioResource Finder</span>
-                    <span class="toolkit-badge d-none d-sm-inline">Research Toolkit</span>
+                <a class="navbar-brand" href="#home">
+                    <span class="brand-mark" aria-hidden="true">⌬</span>
+                    <span>
+                        <strong>BioResource Finder</strong>
+                        <small>Scientific Workflow Navigator</small>
+                    </span>
                 </a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="mainNavbar">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="#search">Search</a></li>
+                    <ul class="navbar-nav ms-auto align-items-lg-center">
+                        <li class="nav-item"><a class="nav-link" href="#tasks">Workflows</a></li>
                         <li class="nav-item"><a class="nav-link" href="#tools">Biology Tools</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#resource-finder">Resource Finder</a></li>
                         <li class="nav-item"><a class="nav-link" href="#categories">Categories</a></li>
                         <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
                     </ul>
+
+                    <button
+                        class="btn problem-button ms-lg-3"
+                        type="button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#problemModal"
+                    >
+                        I Have a Problem
+                    </button>
                 </div>
             </div>
         </nav>
     </header>
 
     <main>
-        <!-- ========================= Resource Finder ========================= -->
-        <section id="search" class="search-hero">
-            <span class="nucleotide nucleotide-a" aria-hidden="true">A</span>
-            <span class="nucleotide nucleotide-t" aria-hidden="true">T</span>
-            <span class="nucleotide nucleotide-g" aria-hidden="true">G</span>
-            <span class="nucleotide nucleotide-c" aria-hidden="true">C</span>
-
+        <!-- =========================
+             Home / Primary task
+        ========================== -->
+        <section id="home" class="home-hero">
             <div class="container">
-                <div class="search-hero-content mx-auto">
-                    <div class="hero-label">
-                        <span class="status-dot" aria-hidden="true"></span>
-                        Resource Finder + Biology Tools
+                <div class="hero-grid">
+                    <div class="hero-copy">
+                        <span class="hero-kicker">Biology Research Toolkit</span>
+
+                        <h1>
+                            Find the next step in your
+                            <span>biological workflow.</span>
+                        </h1>
+
+                        <p>
+                            Start with what you are trying to accomplish. The app can
+                            guide you to a built-in quick check, explain what the result
+                            means, suggest troubleshooting questions, and point you to
+                            an authoritative professional resource.
+                        </p>
+
+                        <div class="hero-actions">
+                            <a class="btn btn-primary app-primary-button" href="#tasks">
+                                Choose a biological task
+                            </a>
+
+                            <a class="btn btn-outline-secondary" href="#resource-finder">
+                                I already know what I need
+                            </a>
+                        </div>
+
+                        <div class="scientific-note">
+                            <span class="scientific-note-mark" aria-hidden="true">i</span>
+                            <span>
+                                Built-in calculations are educational utilities.
+                                Experimental decisions still require appropriate
+                                protocols, parameters, and official documentation.
+                            </span>
+                        </div>
                     </div>
 
-                    <h1>Find a biological resource or use a quick research tool.</h1>
-                    <p class="hero-description">
-                        Search trusted databases and scientific web tools, or use beginner-friendly utilities for DNA sequences, primers, PCR mixtures, dilutions, and restriction sites.
+                    <aside class="workflow-preview" aria-label="Example workflow">
+                        <div class="preview-header">
+                            <span class="sequence-mini">ATG · CCT · GAA</span>
+                            <span class="preview-status">Example path</span>
+                        </div>
+
+                        <ol class="preview-steps">
+                            <li>
+                                <span>1</span>
+                                <div>
+                                    <strong>I have a DNA sequence</strong>
+                                    <small>Clean and inspect the input</small>
+                                </div>
+                            </li>
+                            <li>
+                                <span>2</span>
+                                <div>
+                                    <strong>Run a quick analysis</strong>
+                                    <small>Length, base counts, GC%, reverse complement</small>
+                                </div>
+                            </li>
+                            <li>
+                                <span>3</span>
+                                <div>
+                                    <strong>Choose the next question</strong>
+                                    <small>Identify it, find a gene, design primers, or inspect sites</small>
+                                </div>
+                            </li>
+                            <li>
+                                <span>4</span>
+                                <div>
+                                    <strong>Continue professionally</strong>
+                                    <small>BLAST, Ensembl, Primer-BLAST, NEB, and other official tools</small>
+                                </div>
+                            </li>
+                        </ol>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================
+             Task Cards
+        ========================== -->
+        <section id="tasks" class="task-section section-space">
+            <div class="container">
+                <div class="section-heading">
+                    <span class="eyebrow">START WITH YOUR GOAL</span>
+                    <h2>What are you trying to do?</h2>
+                    <p>
+                        Choose the task that is closest to your real biological question.
+                        You do not need to know the database name first.
                     </p>
+                </div>
 
-                    <div class="search-shell">
-                        <form id="searchForm" class="resource-search-form">
-                            <label for="searchInput" class="visually-hidden">Describe your biological research need</label>
-                            <div class="search-input-wrap">
-                                <span class="search-icon" aria-hidden="true">⌕</span>
-                                <input id="searchInput" class="form-control search-input" type="text" placeholder="Try “protein structure”, “RNA-seq”, “primer design”, or “gene information”" autocomplete="off">
-                            </div>
-                            <button class="btn search-button" type="submit">Search Resources</button>
-                        </form>
-                        <p class="search-helper mb-0">Search by task, data type, resource name, method, or scientific topic.</p>
+                <div id="taskGrid" class="row g-3">
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <button class="task-card task-sequence" type="button" data-workflow="analyzeDna">
+                            <span class="task-icon" aria-hidden="true">AT</span>
+                            <span><strong>Analyze a DNA sequence</strong><small>Clean, count, calculate GC%, and get the reverse complement</small></span>
+                        </button>
                     </div>
 
-                    <div class="quick-search-area">
-                        <span class="quick-search-label">Popular searches:</span>
-                        <div class="quick-search-chips" id="quickSearchButtons">
-                            <button class="quick-chip" type="button" data-search="sequence"><span aria-hidden="true">🧬</span> DNA &amp; RNA</button>
-                            <button class="quick-chip" type="button" data-search="alignment"><span aria-hidden="true">↔</span> Sequence Alignment</button>
-                            <button class="quick-chip" type="button" data-search="gene">Genes</button>
-                            <button class="quick-chip" type="button" data-search="protein">Proteins</button>
-                            <button class="quick-chip" type="button" data-search="protein structure">Structure</button>
-                            <button class="quick-chip" type="button" data-search="RNA-seq">RNA-seq</button>
-                            <button class="quick-chip" type="button" data-search="variant">Variants</button>
-                            <button class="quick-chip" type="button" data-search="PCR">PCR</button>
-                            <button class="quick-chip" type="button" data-search="literature"><span aria-hidden="true">📚</span> Literature</button>
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <button class="task-card task-sequence" type="button" data-workflow="identifySequence">
+                            <span class="task-icon" aria-hidden="true">?</span>
+                            <span><strong>Identify an unknown sequence</strong><small>Choose DNA, RNA, protein, or unknown and find a sensible next step</small></span>
+                        </button>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <button class="task-card task-lab" type="button" data-workflow="primers">
+                            <span class="task-icon" aria-hidden="true">⇥</span>
+                            <span><strong>Design or check PCR primers</strong><small>Quick composition and approximate Tm, then professional checks</small></span>
+                        </button>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <button class="task-card task-lab" type="button" data-workflow="planPcr">
+                            <span class="task-icon" aria-hidden="true">µL</span>
+                            <span><strong>Plan a PCR reaction</strong><small>Scale reagent volumes and build a pooled master mix</small></span>
+                        </button>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <button class="task-card task-warning" type="button" data-workflow="troubleshootPcr">
+                            <span class="task-icon" aria-hidden="true">!</span>
+                            <span><strong>Troubleshoot PCR</strong><small>Explore areas to investigate without pretending to diagnose the experiment</small></span>
+                        </button>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <button class="task-card task-sequence" type="button" data-workflow="restriction">
+                            <span class="task-icon" aria-hidden="true">✂</span>
+                            <span><strong>Work with restriction enzymes</strong><small>Find recognition sites, then check official enzyme conditions</small></span>
+                        </button>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <button class="task-card task-lab" type="button" data-workflow="dilution">
+                            <span class="task-icon" aria-hidden="true">C₁</span>
+                            <span><strong>Prepare a dilution</strong><small>Use C1V1 = C2V2 with clear input validation</small></span>
+                        </button>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <button class="task-card task-genome" type="button" data-workflow="geneGenome">
+                            <span class="task-icon" aria-hidden="true">▦</span>
+                            <span><strong>Find a gene or genome</strong><small>Choose gene records, genome browsers, or genomic context tools</small></span>
+                        </button>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <button class="task-card task-protein" type="button" data-workflow="proteinInfo">
+                            <span class="task-icon" aria-hidden="true">◈</span>
+                            <span><strong>Find protein information</strong><small>Sequence, function, domains, families, and annotations</small></span>
+                        </button>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <button class="task-card task-protein" type="button" data-workflow="proteinStructure">
+                            <span class="task-icon" aria-hidden="true">⬡</span>
+                            <span><strong>Find a protein structure</strong><small>Experimental structures, predictions, and comparative models</small></span>
+                        </button>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <button class="task-card task-data" type="button" data-workflow="sequencingData">
+                            <span class="task-icon" aria-hidden="true">▤</span>
+                            <span><strong>Find sequencing data</strong><small>RNA-seq, raw reads, gene expression, and public study data</small></span>
+                        </button>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <button class="task-card task-learn" type="button" data-workflow="literature">
+                            <span class="task-icon" aria-hidden="true">≡</span>
+                            <span><strong>Search scientific literature</strong><small>Find papers, abstracts, full text, and biological preprints</small></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="task-footer">
+                    <button class="task-secondary-link" type="button" data-workflow="findDatabase">
+                        I don't know which database to use →
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================
+             Workflow Navigator
+        ========================== -->
+        <section id="workflow" class="workflow-section">
+            <div class="container">
+                <div id="workflowPanel" class="workflow-panel">
+                    <div class="workflow-empty">
+                        <span class="workflow-empty-icon" aria-hidden="true">⌁</span>
+                        <div>
+                            <h2>Your workflow will appear here</h2>
+                            <p>Choose a task above to see a short biological path and sensible next actions.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ========================= Search Filters + Results ========================= -->
-        <section class="results-section">
+        <!-- =========================
+             Biology Tools
+        ========================== -->
+        <section id="tools" class="tools-section section-space">
             <div class="container">
-                <div id="filterPanel" class="filter-panel" aria-label="Resource result filters">
-                    <div>
-                        <span class="filter-label">Filter by type</span>
-                        <div class="filter-buttons" id="typeFilters">
-                            <button class="filter-button active" type="button" data-type="All">All</button>
-                            <button class="filter-button" type="button" data-type="Database">Database</button>
-                            <button class="filter-button" type="button" data-type="Analysis Tool">Analysis Tool</button>
-                            <button class="filter-button" type="button" data-type="Genome Browser">Genome Browser</button>
-                            <button class="filter-button" type="button" data-type="Literature">Literature</button>
-                            <button class="filter-button" type="button" data-type="Structure">Structure</button>
-                            <button class="filter-button" type="button" data-type="Primer/PCR">Primer/PCR</button>
+                <div class="section-heading">
+                    <span class="eyebrow">BUILT-IN UTILITIES</span>
+                    <h2>Biology Tools</h2>
+                    <p>
+                        Quick calculations and sequence utilities for everyday biology.
+                        These tools simplify small tasks; they do not replace professional
+                        experimental analysis.
+                    </p>
+                </div>
+
+                <nav class="tool-jump-nav" aria-label="Biology tool shortcuts">
+                    <a href="#dna-tool">DNA Analyzer</a>
+                    <a href="#primer-tool">Primer Check</a>
+                    <a href="#pcr-tool">PCR Calculator</a>
+                    <a href="#pcr-troubleshooting-tool">PCR Troubleshooting</a>
+                    <a href="#dilution-tool">Dilution</a>
+                    <a href="#restriction-tool">Restriction Sites</a>
+                </nav>
+
+                <!-- DNA Analyzer -->
+                <article id="dna-tool" class="tool-panel tool-panel-sequence">
+                    <header class="tool-header">
+                        <div>
+                            <span class="tool-type">Sequence utility</span>
+                            <h3>DNA Sequence Analyzer</h3>
+                            <p>
+                                Paste raw DNA, multiline DNA, or one FASTA record.
+                                A, T, G, C, and optional N bases are supported.
+                            </p>
+                        </div>
+                        <span class="tool-badge">Quick educational analysis</span>
+                    </header>
+
+                    <div class="tool-grid">
+                        <form id="dnaForm" class="tool-form">
+                            <label for="dnaInput" class="form-label">DNA sequence</label>
+                            <textarea
+                                id="dnaInput"
+                                class="form-control sequence-input"
+                                rows="8"
+                                placeholder=">example_sequence&#10;ATGCGTACGATCG"
+                            ></textarea>
+
+                            <p class="form-help">
+                                Whitespace is removed. If a FASTA header is present, the first line beginning with “&gt;” is treated as the header.
+                            </p>
+
+                            <div class="tool-actions">
+                                <button class="btn btn-primary app-primary-button" type="submit">Analyze Sequence</button>
+                                <button id="dnaReset" class="btn btn-outline-secondary" type="button">Reset</button>
+                            </div>
+                        </form>
+
+                        <div id="dnaResult" class="tool-result empty-result" aria-live="polite">
+                            <p>Your cleaned sequence, composition, GC/AT percentages, and reverse complement will appear here.</p>
                         </div>
                     </div>
-                    <div class="category-filter-wrap">
-                        <div class="filter-label-row">
-                            <label class="filter-label mb-0" for="categoryFilter">Biological category</label>
-                            <button id="clearFilters" class="clear-filter-button" type="button">Reset browse</button>
+
+                    <div id="sequenceNextSteps" class="next-step-panel d-none"></div>
+                    <div id="sequenceHelp" class="help-container"></div>
+                </article>
+
+                <!-- Primer Quick Check -->
+                <article id="primer-tool" class="tool-panel tool-panel-lab">
+                    <header class="tool-header">
+                        <div>
+                            <span class="tool-type">Primer workflow</span>
+                            <h3>Primer Design &amp; Quick Check</h3>
+                            <p>
+                                Check one primer or compare a forward/reverse pair using simple sequence composition and the Wallace Tm approximation.
+                            </p>
                         </div>
-                        <select id="categoryFilter" class="form-select">
+                        <span class="tool-badge">Not a specificity test</span>
+                    </header>
+
+                    <form id="primerForm" class="tool-form">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <label for="forwardPrimerInput" class="form-label">Forward primer</label>
+                                <textarea
+                                    id="forwardPrimerInput"
+                                    class="form-control sequence-input"
+                                    rows="4"
+                                    placeholder="ATGCGTACGATCGTACGCTA"
+                                ></textarea>
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <label for="reversePrimerInput" class="form-label">
+                                    Reverse primer <span class="optional-label">optional</span>
+                                </label>
+                                <textarea
+                                    id="reversePrimerInput"
+                                    class="form-control sequence-input"
+                                    rows="4"
+                                    placeholder="CGTAGCTAGCTACGATGCAT"
+                                ></textarea>
+                            </div>
+                        </div>
+
+                        <p class="form-help">
+                            Only A, T, G, and C are accepted here. Approximate Tm uses 2 × (A + T) + 4 × (G + C).
+                        </p>
+
+                        <div class="tool-actions">
+                            <button class="btn btn-primary app-primary-button" type="submit">Check Primer(s)</button>
+                            <button id="primerReset" class="btn btn-outline-secondary" type="button">Reset</button>
+                        </div>
+                    </form>
+
+                    <div id="primerResult" class="tool-result empty-result" aria-live="polite">
+                        <p>Enter a forward primer, and optionally a reverse primer, to see quick composition and approximate Tm results.</p>
+                    </div>
+
+                    <div id="primerNextSteps" class="next-step-panel d-none"></div>
+                    <div id="primerHelp" class="help-container"></div>
+                </article>
+
+                <!-- PCR Calculator -->
+                <article id="pcr-tool" class="tool-panel tool-panel-lab">
+                    <header class="tool-header">
+                        <div>
+                            <span class="tool-type">Laboratory calculation</span>
+                            <h3>Plan a PCR</h3>
+                            <p>
+                                Keep reaction-volume checking separate from pooled master-mix planning.
+                                Enter values from your own protocol.
+                            </p>
+                        </div>
+                        <span class="tool-badge">Protocol-dependent</span>
+                    </header>
+
+                    <form id="pcrForm" class="tool-form">
+                        <div class="row g-3">
+                            <div class="col-12 col-sm-6 col-lg-3">
+                                <label for="pcrReactions" class="form-label">Number of reactions</label>
+                                <input id="pcrReactions" class="form-control" type="number" min="1" step="1" placeholder="e.g. 8">
+                            </div>
+
+                            <div class="col-12 col-sm-6 col-lg-3">
+                                <label for="pcrExtraPercent" class="form-label">Extra percentage</label>
+                                <div class="input-group">
+                                    <input id="pcrExtraPercent" class="form-control" type="number" min="0" step="0.1" value="10">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6 col-lg-3">
+                                <label for="pcrExtraReactions" class="form-label">Extra reactions</label>
+                                <input id="pcrExtraReactions" class="form-control" type="number" min="0" step="1" value="0">
+                            </div>
+
+                            <div class="col-12 col-sm-6 col-lg-3">
+                                <label for="pcrReactionVolume" class="form-label">Reaction volume</label>
+                                <div class="input-group">
+                                    <input id="pcrReactionVolume" class="form-control" type="number" min="0" step="0.01" placeholder="e.g. 25">
+                                    <span class="input-group-text">µL</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="calculator-subsection">
+                            <div class="subsection-heading">
+                                <div>
+                                    <h4>Reaction Calculator</h4>
+                                    <p>Enter the per-reaction volume for each component. Blank rows are ignored.</p>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table reagent-table align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Reagent</th>
+                                            <th scope="col">Volume / reaction (µL)</th>
+                                            <th scope="col">Include in pooled master mix?</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pcrReagentRows">
+                                        <tr data-reagent-row>
+                                            <td><input class="form-control reagent-name" type="text" value="PCR Master Mix"></td>
+                                            <td><input class="form-control reagent-volume" type="number" min="0" step="0.01" placeholder="From your protocol"></td>
+                                            <td><div class="form-check"><input class="form-check-input reagent-pooled" type="checkbox" checked><label class="form-check-label">Include</label></div></td>
+                                        </tr>
+                                        <tr data-reagent-row>
+                                            <td><input class="form-control reagent-name" type="text" value="Forward Primer"></td>
+                                            <td><input class="form-control reagent-volume" type="number" min="0" step="0.01"></td>
+                                            <td><div class="form-check"><input class="form-check-input reagent-pooled" type="checkbox" checked><label class="form-check-label">Include</label></div></td>
+                                        </tr>
+                                        <tr data-reagent-row>
+                                            <td><input class="form-control reagent-name" type="text" value="Reverse Primer"></td>
+                                            <td><input class="form-control reagent-volume" type="number" min="0" step="0.01"></td>
+                                            <td><div class="form-check"><input class="form-check-input reagent-pooled" type="checkbox" checked><label class="form-check-label">Include</label></div></td>
+                                        </tr>
+                                        <tr data-reagent-row>
+                                            <td><input class="form-control reagent-name" type="text" value="Template DNA"></td>
+                                            <td><input class="form-control reagent-volume" type="number" min="0" step="0.01"></td>
+                                            <td><div class="form-check"><input class="form-check-input reagent-pooled" type="checkbox"><label class="form-check-label">Include</label></div></td>
+                                        </tr>
+                                        <tr data-reagent-row>
+                                            <td><input class="form-control reagent-name" type="text" value="Water"></td>
+                                            <td><input class="form-control reagent-volume" type="number" min="0" step="0.01"></td>
+                                            <td><div class="form-check"><input class="form-check-input reagent-pooled" type="checkbox" checked><label class="form-check-label">Include</label></div></td>
+                                        </tr>
+                                        <tr data-reagent-row>
+                                            <td><input class="form-control reagent-name" type="text" placeholder="Other reagent"></td>
+                                            <td><input class="form-control reagent-volume" type="number" min="0" step="0.01"></td>
+                                            <td><div class="form-check"><input class="form-check-input reagent-pooled" type="checkbox" checked><label class="form-check-label">Include</label></div></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tool-actions">
+                            <button class="btn btn-primary app-primary-button" type="submit">Calculate PCR Volumes</button>
+                            <button id="pcrReset" class="btn btn-outline-secondary" type="button">Reset</button>
+                        </div>
+                    </form>
+
+                    <div id="pcrResult" class="tool-result empty-result" aria-live="polite">
+                        <p>Enter reaction settings and reagent volumes from your protocol to calculate scaled totals.</p>
+                    </div>
+
+                    <div id="pcrHelp" class="help-container"></div>
+                </article>
+
+                <!-- PCR Troubleshooting -->
+                <article id="pcr-troubleshooting-tool" class="tool-panel tool-panel-warning">
+                    <header class="tool-header">
+                        <div>
+                            <span class="tool-type">Guided troubleshooting</span>
+                            <h3>My PCR Did Not Work</h3>
+                            <p>
+                                Select what you observed. The app will show areas to investigate,
+                                not a definitive diagnosis.
+                            </p>
+                        </div>
+                        <span class="tool-badge">Investigate, don't diagnose</span>
+                    </header>
+
+                    <form id="pcrTroubleshootForm" class="tool-form">
+                        <label for="pcrProblemSelect" class="form-label">Observed PCR problem</label>
+                        <select id="pcrProblemSelect" class="form-select">
+                            <option value="">Choose an observation</option>
+                            <option value="noProduct">No amplification</option>
+                            <option value="weak">Weak amplification</option>
+                            <option value="multipleBands">Multiple bands</option>
+                            <option value="nonspecific">Non-specific amplification</option>
+                            <option value="smear">Smear</option>
+                            <option value="unexpectedSize">Unexpected product size</option>
+                            <option value="unknown">I don't know</option>
+                        </select>
+
+                        <div class="tool-actions">
+                            <button class="btn btn-primary app-primary-button" type="submit">Show Areas to Investigate</button>
+                            <button id="pcrTroubleshootReset" class="btn btn-outline-secondary" type="button">Reset</button>
+                        </div>
+                    </form>
+
+                    <div id="pcrTroubleshootResult" class="tool-result empty-result" aria-live="polite">
+                        <p>Choose an observed problem to see cautious troubleshooting categories and official guidance.</p>
+                    </div>
+                </article>
+
+                <!-- Dilution -->
+                <article id="dilution-tool" class="tool-panel tool-panel-lab">
+                    <header class="tool-header">
+                        <div>
+                            <span class="tool-type">Laboratory calculation</span>
+                            <h3>Prepare a Dilution</h3>
+                            <p>Calculate the stock volume required using C1V1 = C2V2.</p>
+                        </div>
+                        <span class="tool-badge">Same concentration units required</span>
+                    </header>
+
+                    <form id="dilutionForm" class="tool-form">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-4">
+                                <label for="stockConcentration" class="form-label">Stock concentration (C1)</label>
+                                <input id="stockConcentration" class="form-control" type="number" min="0" step="any" placeholder="e.g. 100">
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label for="desiredConcentration" class="form-label">Desired concentration (C2)</label>
+                                <input id="desiredConcentration" class="form-control" type="number" min="0" step="any" placeholder="e.g. 10">
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label for="finalVolume" class="form-label">Final volume (V2)</label>
+                                <div class="input-group">
+                                    <input id="finalVolume" class="form-control" type="number" min="0" step="any" placeholder="e.g. 100">
+                                    <select id="volumeUnit" class="form-select volume-unit-select" aria-label="Volume unit">
+                                        <option value="µL">µL</option>
+                                        <option value="mL">mL</option>
+                                        <option value="L">L</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="form-help">
+                            C1 and C2 must be expressed in the same concentration unit.
+                            This calculator does not perform concentration-unit conversion.
+                        </p>
+
+                        <div class="tool-actions">
+                            <button class="btn btn-primary app-primary-button" type="submit">Calculate Dilution</button>
+                            <button id="dilutionReset" class="btn btn-outline-secondary" type="button">Reset</button>
+                        </div>
+                    </form>
+
+                    <div id="dilutionResult" class="tool-result empty-result" aria-live="polite">
+                        <p>Enter C1, C2, and V2 to calculate stock and diluent volumes.</p>
+                    </div>
+
+                    <div id="dilutionHelp" class="help-container"></div>
+                </article>
+
+                <!-- Restriction -->
+                <article id="restriction-tool" class="tool-panel tool-panel-sequence">
+                    <header class="tool-header">
+                        <div>
+                            <span class="tool-type">Sequence utility</span>
+                            <h3>Find Restriction Sites</h3>
+                            <p>
+                                Search a DNA sequence for a small verified set of common restriction-enzyme recognition sequences.
+                            </p>
+                        </div>
+                        <span class="tool-badge">Sequence search only</span>
+                    </header>
+
+                    <form id="restrictionForm" class="tool-form">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-8">
+                                <label for="restrictionInput" class="form-label">DNA sequence</label>
+                                <textarea
+                                    id="restrictionInput"
+                                    class="form-control sequence-input"
+                                    rows="6"
+                                    placeholder="Paste DNA or one FASTA record"
+                                ></textarea>
+                            </div>
+
+                            <div class="col-12 col-lg-4">
+                                <label for="enzymeSelect" class="form-label">Restriction enzyme</label>
+                                <select id="enzymeSelect" class="form-select"></select>
+
+                                <div class="recognition-display">
+                                    Recognition sequence:
+                                    <code id="enzymeRecognition">—</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tool-actions">
+                            <button class="btn btn-primary app-primary-button" type="submit">Find Sites</button>
+                            <button id="restrictionReset" class="btn btn-outline-secondary" type="button">Reset</button>
+                        </div>
+                    </form>
+
+                    <div id="restrictionResult" class="tool-result empty-result" aria-live="polite">
+                        <p>Choose an enzyme and analyze a DNA sequence to see recognition-site start positions.</p>
+                    </div>
+
+                    <div id="restrictionNextSteps" class="next-step-panel d-none"></div>
+                    <div id="restrictionHelp" class="help-container"></div>
+                </article>
+            </div>
+        </section>
+
+        <!-- =========================
+             Resource Finder
+        ========================== -->
+        <section id="resource-finder" class="resource-finder-section section-space">
+            <div class="container">
+                <div class="section-heading">
+                    <span class="eyebrow">EXTERNAL SCIENTIFIC RESOURCES</span>
+                    <h2>Resource Finder</h2>
+                    <p>
+                        Describe what you need to accomplish. Results are ranked with
+                        a simple local scoring system so more directly relevant resources appear first.
+                    </p>
+                </div>
+
+                <div class="resource-search-shell">
+                    <form id="searchForm" class="resource-search-form">
+                        <label for="searchInput" class="form-label">What do you need to do?</label>
+
+                        <div class="search-row">
+                            <div class="search-input-container">
+                                <input
+                                    id="searchInput"
+                                    class="form-control search-input"
+                                    type="search"
+                                    autocomplete="off"
+                                    aria-autocomplete="list"
+                                    aria-controls="searchSuggestions"
+                                    placeholder="Try “identify a DNA sequence”, “design primers”, or “find RNA-seq data”"
+                                >
+                                <div id="searchSuggestions" class="search-suggestions d-none" role="listbox"></div>
+                            </div>
+
+                            <button class="btn btn-primary app-primary-button" type="submit">
+                                Find Resources
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="popular-searches">
+                        <span>Popular tasks:</span>
+                        <button type="button" class="search-chip" data-search="protein structure">Protein structure</button>
+                        <button type="button" class="search-chip" data-search="raw RNA-seq reads">RNA-seq data</button>
+                        <button type="button" class="search-chip" data-search="design PCR primers">PCR primers</button>
+                        <button type="button" class="search-chip" data-search="genome browser">Genome browser</button>
+                        <button type="button" class="search-chip" data-search="scientific literature">Literature</button>
+                    </div>
+                </div>
+
+                <div class="resource-filter-bar">
+                    <div>
+                        <label for="resourceTypeFilter" class="filter-label">Resource type</label>
+                        <select id="resourceTypeFilter" class="form-select">
+                            <option value="All">All types</option>
+                            <option value="Database">Database</option>
+                            <option value="Analysis Tool">Analysis Tool</option>
+                            <option value="Genome Browser">Genome Browser</option>
+                            <option value="Literature">Literature</option>
+                            <option value="Structure">Structure</option>
+                            <option value="Primer/PCR">Primer/PCR</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="resourceCategoryFilter" class="filter-label">Biological category</label>
+                        <select id="resourceCategoryFilter" class="form-select">
                             <option value="All">All categories</option>
                             <option value="Sequence & Alignment">Sequence &amp; Alignment</option>
                             <option value="Genes & Genomes">Genes &amp; Genomes</option>
@@ -119,220 +725,152 @@
                             <option value="Genetic Variation">Genetic Variation</option>
                             <option value="PCR & Primer Design">PCR &amp; Primer Design</option>
                             <option value="Molecular Biology & Cloning">Molecular Biology &amp; Cloning</option>
+                            <option value="Model Organisms">Model Organisms</option>
                         </select>
                     </div>
+
+                    <button id="resourceFilterReset" class="btn btn-outline-secondary filter-reset-button" type="button">
+                        Reset filters
+                    </button>
                 </div>
 
-                <div id="resultsArea" aria-live="polite">
-                    <div class="starter-panel">
-                        <div class="starter-heading">
-                            <span class="starter-symbol" aria-hidden="true">⌁</span>
-                            <div>
-                                <h2>Not sure where to start?</h2>
-                                <p>Try a common biological task, or jump directly to one of the built-in tools.</p>
-                            </div>
-                        </div>
-                        <div class="row g-3 mt-1">
-                            <div class="col-12 col-md-6 col-lg-3"><button class="example-search" type="button" data-search="alignment"><span class="example-number">01</span><strong>Align DNA sequences</strong><span>Find sequence comparison tools</span></button></div>
-                            <div class="col-12 col-md-6 col-lg-3"><button class="example-search" type="button" data-search="protein"><span class="example-number">02</span><strong>Find protein information</strong><span>Explore sequence and function resources</span></button></div>
-                            <div class="col-12 col-md-6 col-lg-3"><button class="example-search" type="button" data-search="gene"><span class="example-number">03</span><strong>Explore a human gene</strong><span>Find gene and genome resources</span></button></div>
-                            <div class="col-12 col-md-6 col-lg-3"><button class="example-search" type="button" data-search="literature"><span class="example-number">04</span><strong>Search scientific literature</strong><span>Find publications and abstracts</span></button></div>
+                <div id="resourceResults" class="resource-results" aria-live="polite">
+                    <div class="empty-state">
+                        <span class="empty-state-icon" aria-hidden="true">⌕</span>
+                        <div>
+                            <h3>Not sure where to start?</h3>
+                            <p>Try “identify a DNA sequence”, “find a protein structure”, “troubleshoot PCR”, or “search scientific literature”.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ========================= Compact Dashboard ========================= -->
-        <section class="dashboard-section">
-            <div class="container">
-                <div class="dashboard-panel">
-                    <div class="dashboard-heading">
-                        <span class="eyebrow">RESEARCH TOOLKIT</span>
-                        <h2>What would you like to do?</h2>
-                    </div>
-                    <div class="dashboard-actions">
-                        <a class="dashboard-action" href="#search">⌕ <span>Find a Database</span></a>
-                        <a class="dashboard-action" href="#dna-tool">AT <span>Analyze DNA</span></a>
-                        <a class="dashboard-action" href="#primer-tool">P <span>Check a Primer</span></a>
-                        <a class="dashboard-action" href="#pcr-tool">× <span>Calculate PCR Mix</span></a>
-                        <a class="dashboard-action" href="#dilution-tool">C <span>Calculate Dilution</span></a>
-                        <a class="dashboard-action" href="#restriction-tool">✂ <span>Find Restriction Sites</span></a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ========================= Biology Tools ========================= -->
-        <section id="tools" class="tools-section section-space">
-            <div class="container">
-                <div class="section-heading">
-                    <span class="eyebrow">BUILT-IN UTILITIES</span>
-                    <h2>Biology Tools</h2>
-                    <p>Quick calculations and sequence utilities for everyday biology. These are educational convenience tools, not substitutes for validated experimental software or protocols.</p>
-                </div>
-
-                <!-- DNA Sequence Analyzer -->
-                <article id="dna-tool" class="tool-card tool-sequence">
-                    <div class="tool-heading">
-                        <div class="tool-icon" aria-hidden="true">ATGC</div>
-                        <div><span class="tool-kicker">SEQUENCE UTILITY</span><h3>DNA Sequence Analyzer</h3><p>Clean a DNA sequence, count bases, calculate GC/AT content, and generate the reverse complement.</p></div>
-                    </div>
-
-                    <div class="row g-4">
-                        <div class="col-lg-7">
-                            <form id="dnaForm">
-                                <label class="form-label fw-semibold" for="dnaInput">DNA sequence or FASTA input</label>
-                                <textarea id="dnaInput" class="form-control sequence-textarea" rows="7" spellcheck="false" placeholder=">example_sequence&#10;ATGCGTACGATCG"></textarea>
-                                <p class="form-help">Accepted: A, T, G, C and optional N. Lowercase letters and whitespace are cleaned automatically. One FASTA record at a time.</p>
-                                <p class="form-help">Supported sequence symbols: A, T, G, C and N. A FASTA header may begin with &gt; on the first non-empty line.</p>
-                                <div class="tool-buttons"><button class="btn primary-tool-button" type="submit">Analyze Sequence</button><button id="dnaReset" class="btn reset-button" type="button">Reset</button></div>
-                            </form>
-                        </div>
-                        <div class="col-lg-5"><div id="dnaResult" class="tool-result empty-result" aria-live="polite"><p>Enter a sequence to see length, nucleotide counts, GC/AT content, and reverse complement.</p></div></div>
-                    </div>
-                    <div id="sequenceContext" class="context-panel d-none" aria-live="polite"></div>
-                    <div id="sequenceHelp" class="help-slot"></div>
-                </article>
-
-                <!-- Primer Quick Check -->
-                <article id="primer-tool" class="tool-card tool-primer">
-                    <div class="tool-heading">
-                        <div class="tool-icon" aria-hidden="true">5′</div>
-                        <div><span class="tool-kicker">PRIMER UTILITY</span><h3>Primer Quick Check</h3><p>Perform simple length, composition, GC-content, and approximate melting-temperature checks.</p></div>
-                    </div>
-                    <div class="row g-4">
-                        <div class="col-lg-7">
-                            <form id="primerForm">
-                                <label class="form-label fw-semibold" for="primerInput">Primer sequence</label>
-                                <input id="primerInput" class="form-control sequence-input" type="text" placeholder="Example: ATGCGTACGATCGTACGCTA" autocomplete="off" spellcheck="false">
-                                <p class="form-help">Use DNA bases A, T, G and C only. This check does not test specificity or secondary structure.</p>
-                                <p class="form-help">Use A, T, G and C only. The Tm estimate uses the simple Wallace rule.</p>
-                                <div class="tool-buttons"><button class="btn primary-tool-button" type="submit">Check Primer</button><button id="primerReset" class="btn reset-button" type="button">Reset</button></div>
-                            </form>
-                        </div>
-                        <div class="col-lg-5"><div id="primerResult" class="tool-result empty-result" aria-live="polite"><p>Enter a primer to see basic composition and an approximate Tm.</p></div></div>
-                    </div>
-                    <div id="primerContext" class="context-panel d-none" aria-live="polite"></div>
-                    <div id="primerHelp" class="help-slot"></div>
-                </article>
-
-                <!-- PCR Master Mix Calculator -->
-                <article id="pcr-tool" class="tool-card tool-lab">
-                    <div class="tool-heading">
-                        <div class="tool-icon" aria-hidden="true">PCR</div>
-                        <div><span class="tool-kicker">LAB CALCULATOR</span><h3>PCR Master Mix Calculator</h3><p>Scale per-reaction reagent volumes to multiple reactions with a small extra-volume allowance.</p></div>
-                    </div>
-
-                    <form id="pcrForm">
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-4"><label class="form-label" for="pcrReactions">Number of reactions</label><input id="pcrReactions" class="form-control" type="number" min="1" step="1" value="8"></div>
-                            <div class="col-md-4"><label class="form-label" for="pcrExtra">Extra volume (%)</label><input id="pcrExtra" class="form-control" type="number" min="0" step="1" value="10"></div>
-                            <div class="col-md-4"><div class="protocol-note"><strong>Example values only</strong><span>Replace reagent volumes with the values required by your own protocol.</span></div></div>
-                        </div>
-
-                        <div class="table-responsive">
-                            <table class="table calculator-table align-middle">
-                                <thead><tr><th scope="col">Reagent</th><th scope="col">Example volume / reaction (µL)</th></tr></thead>
-                                <tbody>
-                                    <tr><td>PCR Master Mix</td><td><input class="form-control pcr-volume" type="number" min="0" step="0.01" value="12.5" data-reagent="PCR Master Mix"></td></tr>
-                                    <tr><td>Forward Primer</td><td><input class="form-control pcr-volume" type="number" min="0" step="0.01" value="0.5" data-reagent="Forward Primer"></td></tr>
-                                    <tr><td>Reverse Primer</td><td><input class="form-control pcr-volume" type="number" min="0" step="0.01" value="0.5" data-reagent="Reverse Primer"></td></tr>
-                                    <tr><td>Template DNA</td><td><input class="form-control pcr-volume" type="number" min="0" step="0.01" value="1" data-reagent="Template DNA"></td></tr>
-                                    <tr><td>Water</td><td><input class="form-control pcr-volume" type="number" min="0" step="0.01" value="10.5" data-reagent="Water"></td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="tool-buttons"><button class="btn primary-tool-button" type="submit">Calculate Mix</button><button id="pcrReset" class="btn reset-button" type="button">Reset</button></div>
-                    </form>
-                    <div id="pcrResult" class="tool-result empty-result mt-4" aria-live="polite"><p>Adjust the example values to match your protocol, then calculate the total volume required.</p></div>
-                    <div id="pcrContext" class="context-panel d-none" aria-live="polite"></div>
-                    <div id="pcrHelp" class="help-slot"></div>
-                </article>
-
-                <!-- Dilution Calculator -->
-                <article id="dilution-tool" class="tool-card tool-lab">
-                    <div class="tool-heading">
-                        <div class="tool-icon" aria-hidden="true">C₁</div>
-                        <div><span class="tool-kicker">LAB CALCULATOR</span><h3>Dilution Calculator</h3><p>Use C1 × V1 = C2 × V2 to calculate the stock volume and diluent needed for a simple dilution.</p></div>
-                    </div>
-                    <form id="dilutionForm">
-                        <div class="row g-3">
-                            <div class="col-md-4"><label class="form-label" for="stockConcentration">Stock concentration (C1)</label><input id="stockConcentration" class="form-control" type="number" min="0" step="any" placeholder="100"></div>
-                            <div class="col-md-4"><label class="form-label" for="desiredConcentration">Desired concentration (C2)</label><input id="desiredConcentration" class="form-control" type="number" min="0" step="any" placeholder="10"></div>
-                            <div class="col-md-4"><label class="form-label" for="finalVolume">Final volume (V2)</label><div class="input-group"><input id="finalVolume" class="form-control" type="number" min="0" step="any" placeholder="100"><select id="volumeUnit" class="form-select unit-select" aria-label="Volume unit"><option value="µL">µL</option><option value="mL">mL</option></select></div></div>
-                        </div>
-                        <p class="form-help">C1 and C2 must use the same concentration unit. The calculator does not perform concentration-unit conversion.</p>
-                        <div class="tool-buttons"><button class="btn primary-tool-button" type="submit">Calculate Dilution</button><button id="dilutionReset" class="btn reset-button" type="button">Reset</button></div>
-                    </form>
-                    <div id="dilutionResult" class="tool-result empty-result mt-4" aria-live="polite"><p>Enter C1, C2, and V2 to calculate the required stock and diluent volumes.</p></div>
-                    <div id="dilutionContext" class="context-panel d-none" aria-live="polite"></div>
-                    <div id="dilutionHelp" class="help-slot"></div>
-                </article>
-
-                <!-- Restriction Site Finder -->
-                <article id="restriction-tool" class="tool-card tool-restriction">
-                    <div class="tool-heading">
-                        <div class="tool-icon" aria-hidden="true">✂</div>
-                        <div><span class="tool-kicker">SEQUENCE UTILITY</span><h3>Restriction Site Finder</h3><p>Search a DNA sequence for recognition sites of a small built-in set of common restriction enzymes.</p></div>
-                    </div>
-                    <div class="row g-4">
-                        <div class="col-lg-7">
-                            <form id="restrictionForm">
-                                <label class="form-label fw-semibold" for="restrictionInput">DNA sequence</label>
-                                <textarea id="restrictionInput" class="form-control sequence-textarea" rows="6" spellcheck="false" placeholder="ATGCGAATTCTTAGGATCC..."></textarea>
-                                <p class="form-help">The tool reports recognition-site start positions, not enzyme cleavage positions.</p>
-                                <div class="row g-3 mt-1"><div class="col-sm-7"><label class="form-label" for="enzymeSelect">Restriction enzyme</label><select id="enzymeSelect" class="form-select"></select></div><div class="col-sm-5"><label class="form-label">Recognition sequence</label><div id="enzymeRecognition" class="recognition-display">—</div></div></div>
-                                <div class="tool-buttons"><button class="btn primary-tool-button" type="submit">Find Sites</button><button id="restrictionReset" class="btn reset-button" type="button">Reset</button></div>
-                            </form>
-                        </div>
-                        <div class="col-lg-5"><div id="restrictionResult" class="tool-result empty-result" aria-live="polite"><p>Select an enzyme and enter a DNA sequence to find matching recognition sites.</p></div></div>
-                    </div>
-                    <div id="restrictionContext" class="context-panel d-none" aria-live="polite"></div>
-                    <div id="restrictionHelp" class="help-slot"></div>
-                </article>
-            </div>
-        </section>
-
-        <!-- ========================= Resource Categories ========================= -->
+        <!-- =========================
+             Categories
+        ========================== -->
         <section id="categories" class="categories-section section-space">
             <div class="container">
-                <div class="section-heading"><span class="eyebrow">RESOURCE DIRECTORY</span><h2>Browse resources by biological category</h2><p>The local directory is organized around common research tasks rather than a single database provider.</p></div>
-                <div class="row g-3">
-                    <div class="col-12 col-md-6 col-lg-4"><article class="directory-card category-sequence"><div class="directory-icon">AT</div><div><h3>Sequence &amp; Alignment</h3><p>DNA, RNA, BLAST, alignments, nucleotide records, and sequence archives.</p></div></article></div>
-                    <div class="col-12 col-md-6 col-lg-4"><article class="directory-card category-genome"><div class="directory-icon">▦</div><div><h3>Genes &amp; Genomes</h3><p>Gene records, genome assemblies, annotations, variants, and genome browsers.</p></div></article></div>
-                    <div class="col-12 col-md-6 col-lg-4"><article class="directory-card category-protein"><div class="directory-icon">◈</div><div><h3>Protein Information</h3><p>Protein sequences, functions, families, domains, and annotations.</p></div></article></div>
-                    <div class="col-12 col-md-6 col-lg-4"><article class="directory-card category-structure"><div class="directory-icon">⬡</div><div><h3>Protein Structure</h3><p>Experimentally determined and predicted macromolecular structures.</p></div></article></div>
-                    <div class="col-12 col-md-6 col-lg-4"><article class="directory-card category-literature"><div class="directory-icon">≡</div><div><h3>Scientific Literature</h3><p>Articles, abstracts, preprints, and full-text biomedical literature.</p></div></article></div>
-                    <div class="col-12 col-md-6 col-lg-4"><article class="directory-card category-data"><div class="directory-icon">▤</div><div><h3>Expression &amp; Sequencing Data</h3><p>RNA-seq, expression studies, raw reads, and high-throughput datasets.</p></div></article></div>
-                    <div class="col-12 col-md-6 col-lg-4"><article class="directory-card category-pathway"><div class="directory-icon">⌘</div><div><h3>Pathways &amp; Functional Analysis</h3><p>Pathways, ontology, enrichment, biological processes, and metabolism.</p></div></article></div>
-                    <div class="col-12 col-md-6 col-lg-4"><article class="directory-card category-variant"><div class="directory-icon">Δ</div><div><h3>Genetic Variation</h3><p>Variants, SNPs, clinical interpretations, and population frequencies.</p></div></article></div>
-                    <div class="col-12 col-md-6 col-lg-4"><article class="directory-card category-primer"><div class="directory-icon">5′</div><div><h3>PCR &amp; Primer Design</h3><p>Primer design, specificity checking, oligonucleotide analysis, and PCR support.</p></div></article></div>
-                    <div class="col-12 col-md-6 col-lg-4"><article class="directory-card category-cloning"><div class="directory-icon">✂</div><div><h3>Molecular Biology &amp; Cloning</h3><p>Plasmids, restriction enzymes, cloning planning, and molecular-biology tools.</p></div></article></div>
+                <div class="section-heading">
+                    <span class="eyebrow">BROWSE THE BIOLOGICAL WEB</span>
+                    <h2>Resource Categories</h2>
+                    <p>Browse a category if you know the general type of information you need.</p>
+                </div>
+
+                <div id="categoryGrid" class="row g-3">
+                    <div class="col-12 col-md-6 col-lg-4"><button class="category-card category-sequence" type="button" data-category="Sequence & Alignment"><span>AT</span><div><strong>Sequence &amp; Alignment</strong><small>DNA, RNA, BLAST, alignments, and nucleotide archives</small></div></button></div>
+                    <div class="col-12 col-md-6 col-lg-4"><button class="category-card category-genome" type="button" data-category="Genes & Genomes"><span>▦</span><div><strong>Genes &amp; Genomes</strong><small>Gene records, genomic context, and genome browsers</small></div></button></div>
+                    <div class="col-12 col-md-6 col-lg-4"><button class="category-card category-protein" type="button" data-category="Protein Information"><span>◈</span><div><strong>Protein Information</strong><small>Sequences, functions, domains, families, and annotations</small></div></button></div>
+                    <div class="col-12 col-md-6 col-lg-4"><button class="category-card category-protein" type="button" data-category="Protein Structure"><span>⬡</span><div><strong>Protein Structure</strong><small>Experimental structures, predictions, and modeling resources</small></div></button></div>
+                    <div class="col-12 col-md-6 col-lg-4"><button class="category-card category-learn" type="button" data-category="Scientific Literature"><span>≡</span><div><strong>Literature</strong><small>Papers, abstracts, full text, and preprints</small></div></button></div>
+                    <div class="col-12 col-md-6 col-lg-4"><button class="category-card category-data" type="button" data-category="Gene Expression & Sequencing Data"><span>▤</span><div><strong>Expression &amp; Sequencing Data</strong><small>RNA-seq, raw reads, expression studies, and public datasets</small></div></button></div>
+                    <div class="col-12 col-md-6 col-lg-4"><button class="category-card category-analysis" type="button" data-category="Pathways & Functional Analysis"><span>⌘</span><div><strong>Pathways &amp; Functional Analysis</strong><small>Pathways, GO, enrichment, and gene-list interpretation</small></div></button></div>
+                    <div class="col-12 col-md-6 col-lg-4"><button class="category-card category-warning" type="button" data-category="Genetic Variation"><span>Δ</span><div><strong>Genetic Variation</strong><small>Variants, SNPs, population frequencies, and associations</small></div></button></div>
+                    <div class="col-12 col-md-6 col-lg-4"><button class="category-card category-lab" type="button" data-category="PCR & Primer Design"><span>⇥</span><div><strong>PCR &amp; Primer Design</strong><small>Primer design, specificity, oligo analysis, and PCR tools</small></div></button></div>
+                    <div class="col-12 col-md-6 col-lg-4"><button class="category-card category-sequence" type="button" data-category="Molecular Biology & Cloning"><span>✂</span><div><strong>Molecular Biology &amp; Cloning</strong><small>Plasmids, restriction enzymes, cloning, and digestion tools</small></div></button></div>
+                    <div class="col-12 col-md-6 col-lg-4"><button class="category-card category-genome" type="button" data-category="Model Organisms"><span>◎</span><div><strong>Model Organisms</strong><small>Curated databases for fly, mouse, zebrafish, and C. elegans</small></div></button></div>
                 </div>
             </div>
         </section>
 
-        <!-- ========================= About ========================= -->
+        <!-- =========================
+             About
+        ========================== -->
         <section id="about" class="about-section">
             <div class="container">
                 <div class="about-panel">
-                    <div class="about-mark" aria-hidden="true">i</div>
+                    <div class="about-icon" aria-hidden="true">i</div>
                     <div>
                         <h2>About BioResource Finder</h2>
-                        <p>BioResource Finder combines an educational directory of biological databases with a small set of built-in sequence and laboratory calculation utilities.</p>
-                        <p class="about-note mb-0"><strong>Educational project:</strong> built-in calculators provide convenience calculations only. For research and laboratory work, verify methods, parameters, database documentation, primer specificity, enzyme conditions, reagent specifications, and protocols using appropriate official scientific resources.</p>
+                        <p>
+                            BioResource Finder helps biology students and researchers move
+                            from a biological question to an appropriate next step, quick
+                            calculation, learning resource, or professional scientific tool.
+                        </p>
+                        <p class="mb-0">
+                            <strong>Scientific limitation:</strong>
+                            Built-in calculations are educational utilities and should not
+                            replace validated experimental protocols, professional analysis
+                            software, or official scientific documentation.
+                        </p>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
+    <!-- =========================
+         Guided Problem Modal
+    ========================== -->
+    <div
+        class="modal fade"
+        id="problemModal"
+        tabindex="-1"
+        aria-labelledby="problemModalLabel"
+        aria-hidden="true"
+    >
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content problem-modal">
+                <div class="modal-header">
+                    <div>
+                        <span class="eyebrow">GUIDED TROUBLESHOOTING</span>
+                        <h2 class="modal-title fs-4" id="problemModalLabel">I Have a Problem</h2>
+                    </div>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p class="modal-intro">
+                        Choose the problem that is closest to what you are experiencing.
+                        The guidance is a starting map, not an expert diagnostic system.
+                    </p>
+
+                    <label for="problemSelect" class="form-label">What is happening?</label>
+                    <select id="problemSelect" class="form-select">
+                        <option value="">Choose a problem</option>
+                        <option value="pcrNoProduct">My PCR has no product</option>
+                        <option value="pcrMultipleBands">My PCR has multiple bands</option>
+                        <option value="strangeSequence">My sequence contains strange characters</option>
+                        <option value="unknownSequence">I don't know what my sequence is</option>
+                        <option value="primerGc">My primer has unusual GC content</option>
+                        <option value="whichDatabase">I don't know which database to use</option>
+                        <option value="cannotFindGene">I can't find my gene</option>
+                        <option value="needStructure">I need a protein structure</option>
+                        <option value="needSequencingData">I need sequencing data</option>
+                        <option value="nextStep">I don't know what to do next</option>
+                    </select>
+
+                    <button id="problemGuideButton" class="btn btn-primary app-primary-button mt-3" type="button">
+                        Show Guidance
+                    </button>
+
+                    <div id="problemResult" class="problem-result empty-result mt-4" aria-live="polite">
+                        <p>Select a problem to see an explanation, possible checks, an internal tool, and professional resources.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================
+         Footer
+    ========================== -->
     <footer class="site-footer">
-        <div class="container footer-content"><strong>BioResource Finder</strong><span>Educational web development project · <span id="currentYear"></span></span></div>
+        <div class="container footer-content">
+            <div>
+                <strong>BioResource Finder</strong>
+                <span>Biology Research Toolkit</span>
+            </div>
+
+            <span>
+                Educational web application · <span id="currentYear"></span>
+            </span>
+        </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    ></script>
     <script src="script.js"></script>
 </body>
 </html>
